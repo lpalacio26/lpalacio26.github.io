@@ -54,7 +54,6 @@ const asciiFrames = [
 █ ▀▀▀ █ ▐▌   ▐▌ █ ▀▀▀ █
 ▀▀▀▀▀▀▀▀▀     ▀▀▀▀▀▀▀▀▀
 `,
-  // New cyberpunk-style additions
   `
 ┌─┐┬ ┬┌┬┐┌─┐┬─┐┌┬┐┌─┐┬ ┬
 ├─┤│ │ │ │ │├┬┘ │ ├─┤└┬┘
@@ -122,17 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
   generateRandomAscii();
   asciiInterval = setInterval(generateRandomAscii, 5000);
 
-  // Add toggle button
-  const toggleBtn = document.createElement("div");
-  toggleBtn.className = "ascii-toggle";
-  toggleBtn.textContent = "[TOGGLE ASCII]";
-  toggleBtn.onclick = toggleAscii;
-  //document.body.appendChild(toggleBtn);
 });
 
-// Add keyboard shortcut (Ctrl+Alt+A)
-document.addEventListener("keydown", (e) => {
-  if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "a") {
-    toggleAscii();
-  }
-});
+

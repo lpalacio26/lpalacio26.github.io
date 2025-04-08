@@ -149,3 +149,7 @@ class PlanetSystem {
     this.renderPlanet();
   }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  new PlanetSystem();
+});

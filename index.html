@@ -245,6 +245,9 @@
           rgba(51, 255, 153, 0.1) 4px
         );
         pointer-events: none;
+        left: 0;
+        top: 0;
+
       }
 
       .scanline {
@@ -256,11 +259,13 @@
         width: calc(
           100% + 3rem
         ); /* Stretch across full width including padding */
+        top: 0;
+        left: -1.5rem;
       }
 
       @keyframes scan {
         0% {
-          top: 10%;
+          top: -10%;
         }
         100% {
           top: 110%;
@@ -352,7 +357,7 @@
 
       .ascii-glitch {
         position: fixed;
-        top: 50%;
+        top: 10%;
         left: 50%;
         transform: translate(-50%, -50%);
         color: #33ff99;
@@ -373,7 +378,7 @@
         position: absolute;
         opacity: 0;
         pointer-events: none;
-        animation: particle-fall 3s linear;
+        animation: particle-fall 1s linear;
       }
 
       @keyframes particle-fall {
@@ -420,26 +425,12 @@
         }
       }
 
-      .ascii-toggle {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        cursor: pointer;
-        background: black;
-        border: 1px solid #33ff99;
-        padding: 5px 10px;
-        color: #33ff99;
-        font-family: "Courier New", monospace;
-        z-index: 10000;
-      }
 
       .planet-container {
         /* Replace existing styles with */
         position: fixed;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
         z-index: 10001; /* Just above ASCII */
         width: 100vw;
         height: 100vh;
