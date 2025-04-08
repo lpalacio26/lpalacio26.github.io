@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>digital gardens, hypertext</title>
+    <style>
+      body {
+        background-color: #000;
+        color: #33ff99;
+        font-family: "Courier New", Courier, monospace;
+        margin: 0;
+        padding: 2rem;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.03),
+          rgba(0, 0, 0, 0.03) 1px,
+          transparent 2px
+        );
+        pointer-events: none;
+        z-index: 9999;
+      }
+
+      /* Add to style */
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, transparent 20%, black 70%);
+        pointer-events: none;
+        z-index: -1;
+        animation: pulse 5s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      .terminal {
+        position: relative;
+        z-index: 10001; /* Above everything */
+      }
+
+      .tracklist {
+        margin-top: 2rem;
+      }
+      .track {
+        margin: 1rem 0;
+      }
+      .transition {
+        color: #999;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+      }
+      .shutdown {
+        margin-top: 3rem;
+        color: #ff3366;
+      }
+      .audio {
+        margin-top: 0.5rem;
+      }
+      .hidden-link {
+        display: block;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: #66ccff;
+        text-decoration: none;
+      }
+      .typewriter-text::after {
+        content: "|";
+        animation: blink 1s infinite;
+      }
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
+        }
+        51%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes glitch {
+        0% {
+          clip: rect(5px, 9999px, 50px, 0);
+          transform: translate(0);
+        }
+        20% {
+          clip: rect(15px, 9999px, 35px, 0);
+          transform: translate(-5px, 5px);
+        }
+        40% {
+          clip: rect(10px, 9999px, 45px, 0);
+          transform: translate(5px, -5px);
+        }
+        60% {
+          clip: rect(5px, 9999px, 55px, 0);
+          transform: translate(-5px, 5px);
+        }
+        80% {
+          clip: rect(15px, 9999px, 35px, 0);
+          transform: translate(5px, -5px);
+        }
+        100% {
+          clip: rect(5px, 9999px, 50px, 0);
+          transform: translate(0);
+        }
+      }
+      /* Increase glitch intensity for headings */
+      .glitchy {
+        position: relative;
+        color: #33ff99;
+      }
+      .glitchy::before,
+      .glitchy::after {
+        content: attr(data-text);
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0.8;
+        clip: rect(0, 900px, 0, 0);
+      }
+      .glitchy::before {
+        animation: glitch 2s infinite linear alternate-reverse;
+        color: #ff3366;
+      }
+      .glitchy::after {
+        animation: glitch 3s infinite linear alternate;
+        color: #33ff99;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 1rem;
+        }
+        .terminal {
+          padding: 1rem;
+        }
+      }
+
+      .cursor {
+        animation: blink 1s infinite;
+        color: #33ff99;
+      }
+
+      /* Add random typing sounds effect */
+      @keyframes typeSound {
+        0% {
+          text-shadow: 0 0 10px #33ff99;
+        }
+        50% {
+          text-shadow: 0 0 15px #ff3366;
+        }
+        100% {
+          text-shadow: 0 0 10px #33ff99;
+        }
+      }
+
+      .terminal {
+        animation: typeSound 0.1s infinite;
+      }
+
+      .cyber-button {
+        background: #000;
+        border: 1px solid #33ff99;
+        color: #33ff99;
+        padding: 3px 8px;
+        margin-left: 10px;
+        font-family: "Courier New", monospace;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .cyber-button:hover {
+        background: #33ff99;
+        color: #000;
+        text-shadow: 0 0 5px #000;
+      }
+
+      .loading-dots::after {
+        content: "";
+        animation: dots 1s infinite;
+        margin-left: 5px;
+      }
+
+      @keyframes dots {
+        0%,
+        20% {
+          content: "";
+        }
+        40% {
+          content: ".";
+        }
+        60% {
+          content: "..";
+        }
+        80%,
+        100% {
+          content: "...";
+        }
+      }
+
+      .cyber-subscribe {
+        position: fixed;
+        right: 20px;
+        top: 80%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.9);
+        border: 1px solid #33ff99;
+        padding: 1.5rem;
+        width: 300px;
+        box-shadow: 0 0 15px #33ff9933;
+        z-index: 10002; /* Above terminal */
+      }
+
+      .panel-glitch {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent 0px,
+          transparent 2px,
+          rgba(51, 255, 153, 0.1) 3px,
+          rgba(51, 255, 153, 0.1) 4px
+        );
+        pointer-events: none;
+      }
+
+      .scanline {
+        position: absolute;
+        height: 2px;
+        background: #33ff99;
+        opacity: 0.3;
+        animation: scan 4s linear infinite;
+        width: calc(
+          100% + 3rem
+        ); /* Stretch across full width including padding */
+      }
+
+      @keyframes scan {
+        0% {
+          top: 10%;
+        }
+        100% {
+          top: 110%;
+        }
+      }
+
+      .cyber-form {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .cyber-input {
+        background: #000;
+        border: 1px solid #33ff99;
+        color: #33ff99;
+        padding: 8px;
+        font-family: "Courier New", monospace;
+        transition: all 0.3s;
+      }
+
+      .cyber-input:focus {
+        outline: none;
+        box-shadow: 0 0 10px #33ff99;
+      }
+
+      .flicker {
+        color: #33ff99;
+        animation: flicker 2s infinite alternate;
+      }
+
+      @keyframes flicker {
+        0% {
+          opacity: 0.8;
+        }
+        50% {
+          opacity: 0.6;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .form-status {
+        color: #33ff99;
+        font-size: 0.9rem;
+        min-height: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .cyber-subscribe {
+          position: static;
+          width: auto;
+          margin: 2rem 0;
+          transform: none;
+        }
+      }
+      .error-glitch {
+        animation: glitch 1s infinite;
+        color: #ff3366;
+      }
+
+      .error-glitch {
+        animation: glitch 0.8s infinite;
+        text-shadow: 2px 2px #ff3366, -2px -2px #33ff99;
+      }
+
+      @keyframes glitch {
+        0% {
+          transform: translate(0);
+        }
+        20% {
+          transform: translate(-2px, 2px);
+        }
+        40% {
+          transform: translate(2px, -2px);
+        }
+        60% {
+          transform: translate(-1px, 1px);
+        }
+        80% {
+          transform: translate(1px, -1px);
+        }
+        100% {
+          transform: translate(0);
+        }
+      }
+
+      .ascii-glitch {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #33ff99;
+        font-family: "Courier New", monospace;
+        text-align: center;
+        white-space: pre;
+        text-shadow: 0 0 10px #33ff99;
+        opacity: 0.9;
+        z-index: 9998;
+        pointer-events: none;
+        animation: glitch-fade 10s infinite;
+        mix-blend-mode: screen;
+        filter: hue-rotate(0deg);
+        transition: filter 0.3s;
+      }
+
+      .ascii-particle {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+        animation: particle-fall 3s linear;
+      }
+
+      @keyframes particle-fall {
+        from {
+          transform: translateY(-100vh);
+        }
+        to {
+          transform: translateY(100vh);
+        }
+      }
+
+      @keyframes hue-shift {
+        0% {
+          filter: hue-rotate(0deg);
+        }
+        100% {
+          filter: hue-rotate(360deg);
+        }
+      }
+
+      .morph-transition {
+        animation: morph 2s ease-in-out;
+      }
+
+      @keyframes morph {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.2;
+          transform: scale(0.9);
+        }
+      }
+
+      @keyframes glitch-fade {
+        0%,
+        100% {
+          opacity: 0.8;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      .ascii-toggle {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        cursor: pointer;
+        background: black;
+        border: 1px solid #33ff99;
+        padding: 5px 10px;
+        color: #33ff99;
+        font-family: "Courier New", monospace;
+        z-index: 10000;
+      }
+
+      .planet-container {
+        /* Replace existing styles with */
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10001; /* Just above ASCII */
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+      }
+      .planet {
+        font-family: monospace;
+        white-space: pre;
+        color: #33ff99;
+        text-shadow: 0 0 10px currentColor;
+        margin: 20px 0;
+        transition: all 0.5s ease;
+        cursor: pointer;
+        position: relative;
+        z-index: 2;
+      }
+
+      .planet:hover {
+        transform: scale(1.1);
+        filter: hue-rotate(45deg);
+      }
+
+      .orbit {
+        position: absolute;
+        border: 1px dashed rgba(51, 255, 153, 0.3);
+        border-radius: 50%;
+        animation: spin linear infinite;
+      }
+
+      .orbit-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes orbit {
+        from {
+          transform: rotate(0deg) translateX(150px) rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg) translateX(150px) rotate(-360deg);
+        }
+      }
+
+      .moon {
+        position: absolute;
+        font-size: 10px;
+        color: #ccc;
+        animation: orbit linear infinite;
+        z-index: 1;
+        transform: translate(-50%, -50%);
+      }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+        cursor: url(img/cursor.gif), auto;
+        animation: cursor 0.8s linear infinite;
+      }
+
+      @keyframes cursor {
+        0% {
+          cursor: url(img/cursor_frame_1.gif), auto;
+        }
+        50% {
+          cursor: url(img/cursor_frame_2.gif), auto;
+        }
+        100% {
+          cursor: url(img/cursor_frame_3.gif), auto;
+        }
+      }
+
+      #ascii-terminal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10000; /* Higher than planets */
+        pointer-events: none;
+        mix-blend-mode: screen;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="data-feed">
+      > LIVE FEED :: BTC: <span id="cryptoPrice">--</span> :: WEATHER:
+      <span id="weather"></span>
+      <span id="loading" class="loading-dots" style="display: none"></span>
+    </div>
+    <div class="planet-container" id="planetSystem">
+      <!-- Planets will be injected here -->
+    </div>
+    <div id="ascii-terminal" class="ascii-glitch"></div>
+
+    <div class="cyber-subscribe">
+      <div class="panel-glitch"></div>
+      <form id="newsletterForm" class="cyber-form">
+        <div class="scanline"></div>
+        <label class="flicker">> SUBSCRIBE_MAILING_LIST</label>
+        <input
+          type="email"
+          placeholder="user@domain.neo"
+          required
+          class="cyber-input"
+          aria-label="Enter your email address"
+        />
+        <button type="submit" class="cyber-button">[EXECUTE SUBSCRIBE]</button>
+        <div id="formStatus" class="form-status"></div>
+      </form>
+    </div>
+    <div class="terminal">
+      <div class="typewriter-text"></div>
+      <div class="tracklist">
+        <div class="track">
+          1. U HAD ME AT HELLO WORLD 💫 [ ≡≡≡>⟆⟆⟆ ]
+          <div class="transition">
+            > boot sequence: /init → tracing signal...
+          </div>
+        </div>
+        <div class="track">
+          2. cheerleaders \(_//) ☆
+          <div class="transition">
+            >> packet received. uploading .cheer_emotion
+          </div>
+          <a href="#bonus1" class="hidden-link">Access hidden cheer.log</a>
+        </div>
+        <div class="track">
+          3. dem gyozas <▞▚▞> <span class="glitchy">✨</span>
+          <div class="transition">>> dumpling protocol active</div>
+        </div>
+        <div class="track">
+          4. cola season bby ~( ̄ ̄)╭╮
+          <div class="transition">>> carbonation levels: ✦✦✦</div>
+        </div>
+        <div class="track">
+          5. oo.. SNAP [---]
+          <div class="transition">>> parsing unexpected input...</div>
+        </div>
+        <div class="track">
+          6. LOOK AT THE MACROS [▓▓▓▓▓▓]
+          <div class="transition">>> running macro.trace()</div>
+        </div>
+        <div class="track">
+          7. RUMBLEEEEE <(>_<)> ⚡
+          <div class="transition">>> EMERGENCY OVERRIDE</div>
+        </div>
+        <div class="track">
+          8. pushing pixels [█▆▅▇]
+          <div class="transition">>> push_pixel_array() successful</div>
+        </div>
+        <div class="track">
+          9. lip balm (◕‿◕)✧ 💄
+          <div class="transition">>> balm.log: timestamp 03:47AM</div>
+        </div>
+        <div class="track">
+          10. NUMBER CRUNCHERS [●▀▀▀▀●]
+          <div class="transition">>> CRUNCH_MODE: ON</div>
+          <a href="#easteregg" class="hidden-link"
+            >open /core/mem/crunch.secret</a
+          >
+        </div>
+      </div>
+      <div class="shutdown">
+        >> shutting down...<br />
+        >> saving cache to dream.mem<br />
+        >> /log off<br />
+        >> connection lost.
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="dom_loading.js"></script>
+  <script type="text/javascript" src="get_user_info.js"></script>
+  <script type="text/javascript" src="typewriter.js"></script>
+  <script type="text/javascript" src="weather_data.js"></script>
+  <script type="text/javascript" src="newsletter_form.js"></script>
+  <script type="text/javascript" src="ascii_art.js"></script>
+  <script type="text/javascript" src="ascii_effect.js"></script>
+  <script type="text/javascript" src="planets.js"></script>
+</html>
