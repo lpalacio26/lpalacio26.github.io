@@ -91,34 +91,6 @@ class CyberAscii {
     `;
   }
 
-  animateToMusic() {
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-
-    const update = () => {
-      analyser.getByteFrequencyData(dataArray);
-      const energy = dataArray.reduce((a, b) => a + b) / bufferLength;
-
-      this.element.style.filter = `
-        hue-rotate(${energy * 10}deg)
-        contrast(${100 + energy}%)
-      `;
-
-      requestAnimationFrame(update);
-    };
-
-    update();
-  }
-
-  generateRandomAscii() {
-    this.element.classList.add("morph-transition");
-
-    setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * asciiFrames.length);
-      this.element.textContent = asciiFrames[randomIndex];
-      this.element.classList.remove("morph-transition");
-    }, 1000);
-  }
 }
 
 // Initialize

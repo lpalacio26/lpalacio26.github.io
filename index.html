@@ -247,7 +247,6 @@
         pointer-events: none;
         left: 0;
         top: 0;
-
       }
 
       .scanline {
@@ -357,9 +356,8 @@
 
       .ascii-glitch {
         position: fixed;
-        top: 10%;
+        top: 40%;
         left: 50%;
-        transform: translate(-50%, -50%);
         color: #33ff99;
         font-family: "Courier New", monospace;
         text-align: center;
@@ -368,7 +366,7 @@
         opacity: 0.9;
         z-index: 9998;
         pointer-events: none;
-        animation: glitch-fade 10s infinite;
+        animation: glitch-fade 5s infinite;
         mix-blend-mode: screen;
         filter: hue-rotate(0deg);
         transition: filter 0.3s;
@@ -416,15 +414,20 @@
       }
 
       @keyframes glitch-fade {
-        0%,
-        100% {
-          opacity: 0.8;
+        0% {
+          opacity: 0;
+        }
+
+        1% {
+          opacity: 1;
         }
         50% {
+          opacity: 0.8;
+        }
+        100% {
           opacity: 0.3;
         }
       }
-
 
       .planet-container {
         /* Replace existing styles with */
@@ -499,7 +502,7 @@
 
       body {
         margin: 0;
-        overflow: hidden;
+        overflow: vertical;
         cursor: url(img/cursor.gif), auto;
         animation: cursor 0.8s linear infinite;
       }
@@ -514,16 +517,6 @@
         100% {
           cursor: url(img/cursor_frame_3.gif), auto;
         }
-      }
-
-      #ascii-terminal {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 10000; /* Higher than planets */
-        pointer-events: none;
-        mix-blend-mode: screen;
       }
     </style>
   </head>

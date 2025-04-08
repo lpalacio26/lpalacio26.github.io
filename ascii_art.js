@@ -77,12 +77,6 @@ function generateRandomAscii() {
   asciiTerminal.textContent = asciiFrames[randomIndex];
 }
 
-// Toggle visibility with animation
-function toggleAscii() {
-  const asciiTerminal = document.getElementById("ascii-terminal");
-  asciiTerminal.style.display =
-    asciiTerminal.style.display === "none" ? "block" : "none";
-}
 
 // Initialize with random art and rotation
 document.addEventListener("DOMContentLoaded", () => {
