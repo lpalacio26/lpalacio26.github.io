@@ -96,5 +96,4 @@ class CyberAscii {
 // Initialize
 document.addEventListener("DOMContentLoaded", () => {
   const cyberAscii = new CyberAscii();
-  setInterval(() => cyberAscii.generateRandomAscii(), 5000);
 });
