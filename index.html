@@ -6,8 +6,8 @@
     <title>digital gardens, hypertext</title>
     <style>
       body {
-        background-color: #000;
-        color: #33ff99;
+        background-color:red;
+        color: yellow;
         font-family: "Courier New", Courier, monospace;
         margin: 0;
         padding: 2rem;
@@ -37,7 +37,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: radial-gradient(circle, transparent 20%, black 50%);
+        background: radial-gradient(circle, transparent 40%, red 45%);
         pointer-events: none;
         z-index: -1;
         animation: pulse 5s infinite;
@@ -129,7 +129,7 @@
       /* Increase glitch intensity for headings */
       .glitchy {
         position: relative;
-        color: #33ff99;
+        color: yellow;
       }
       .glitchy::before,
       .glitchy::after {
@@ -146,7 +146,7 @@
       }
       .glitchy::after {
         animation: glitch 3s infinite linear alternate;
-        color: #33ff99;
+        color: yellow;
       }
 
       @media (max-width: 600px) {
@@ -160,20 +160,7 @@
 
       .cursor {
         animation: blink 1s infinite;
-        color: #33ff99;
-      }
-
-      /* Add random typing sounds effect */
-      @keyframes typeSound {
-        0% {
-          text-shadow: 0 0 10px #33ff99;
-        }
-        50% {
-          text-shadow: 0 0 15px #ff3366;
-        }
-        100% {
-          text-shadow: 0 0 10px #33ff99;
-        }
+        color: yellow;
       }
 
       .terminal {
@@ -181,9 +168,9 @@
       }
 
       .cyber-button {
-        background: #000;
+        background: red;
         border: 1px solid #33ff99;
-        color: #33ff99;
+        color: yellow;
         padding: 3px 8px;
         font-family: "Courier New", monospace;
         cursor: pointer;
@@ -191,9 +178,9 @@
       }
 
       .cyber-button:hover {
-        background: #33ff99;
+        background: red;
         color: #000;
-        text-shadow: 0 0 5px #000;
+        text-shadow: 0 0 5px red;
       }
 
       .loading-dots::after {
@@ -224,8 +211,8 @@
         right: 20px;
         top: 80%;
         transform: translateY(-50%);
-        background: rgba(0, 0, 0, 0.9);
-        border: 1px solid #33ff99;
+        background: rgba(255, 0, 0, 0.9);
+        border: 1px solid yellow;
         padding: 1.5rem;
         width: 300px;
         box-shadow: 0 0 15px #33ff9933;
@@ -251,7 +238,7 @@
       .scanline {
         position: absolute;
         height: 2px;
-        background: #33ff99;
+        background: yellow;
         opacity: 0.3;
         animation: scan 4s linear infinite;
         width: calc(
@@ -278,9 +265,9 @@
       }
 
       .cyber-input {
-        background: #000;
-        border: 1px solid #33ff99;
-        color: #33ff99;
+        background: red;
+        border: 1px solid yellow;
+        color: yellow;
         padding: 8px;
         font-family: "Courier New", monospace;
         transition: all 0.3s;
@@ -288,11 +275,11 @@
 
       .cyber-input:focus {
         outline: none;
-        box-shadow: 0 0 10px #33ff99;
+        box-shadow: 0 0 10px yellow;
       }
 
       .flicker {
-        color: #33ff99;
+        color: yellow;
         animation: flicker 2s infinite alternate;
       }
 
@@ -309,7 +296,7 @@
       }
 
       .form-status {
-        color: #33ff99;
+        color: yellow;
         font-size: 0.9rem;
         min-height: 20px;
       }
@@ -329,7 +316,7 @@
 
       .error-glitch {
         animation: glitch 0.8s infinite;
-        text-shadow: 2px 2px #ff3366, -2px -2px #33ff99;
+        text-shadow: 2px 2px #ff3366, -2px -2px yellow;
       }
 
       @keyframes glitch {
@@ -357,11 +344,11 @@
         position: fixed;
         top: 40%;
         left: 50%;
-        color: #33ff99;
+        color: yellow;
         font-family: "Courier New", monospace;
         text-align: center;
         white-space: pre;
-        text-shadow: 0 0 10px #33ff99;
+        text-shadow: 0 0 10px yellow;
         opacity: 0.9;
         z-index: 9998;
         pointer-events: none;
@@ -476,7 +463,7 @@
       .planet {
         font-family: monospace;
         white-space: pre;
-        color: #33ff99;
+        color: yellow;
         text-shadow: 0 0 10px currentColor;
         margin: 20px 0;
         transition: all 0.5s ease;
@@ -492,7 +479,7 @@
 
       .orbit {
         position: absolute;
-        border: 1px dashed rgba(51, 255, 153, 0.3);
+        border: 1px dashed yellow;
         border-radius: 50%;
         animation: spin linear infinite;
       }
@@ -555,7 +542,7 @@
 
       .error-glitch {
         animation: glitch 1s infinite;
-        text-shadow: 2px 2px #ff3366, -2px -2px #33ff99;
+        text-shadow: 2px 2px #ff3366, -2px -2px yellow;
       }
 
       #cryptoPrice {
