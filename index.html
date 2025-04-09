@@ -68,11 +68,16 @@
         color: yellow;
         animation: quick-flicker 0.1s infinite alternate-reverse;
       }
+
+      .line-through {
+        text-decoration: line-through;
+      }
       .transition {
         color: #999;
         font-size: 0.9rem;
         margin-top: 0.5rem;
       }
+
       .shutdown {
         margin-top: 3rem;
         color: #ff3366;
@@ -591,7 +596,7 @@
         <label class="flicker">> SUBSCRIBE_MAILING_LIST</label>
         <input
           type="email"
-          placeholder="user@domain.neo"
+          placeholder="enter email..."
           required
           class="cyber-input"
           aria-label="Enter your email address"
@@ -604,48 +609,52 @@
       <div class="typewriter-text"></div>
       <div class="tracklist">
         <div class="track quick-flicker">
-          1. U HAD ME AT HELLO WORLD 💫 [ ≡≡≡>⟆⟆⟆ ]
+          <div class="line-through">
+            1. U HAD ME AT HELLO WORLD 💫 [ ≡≡≡>⟆⟆⟆ ]
+          </div>
           <div class="transition">
             > boot sequence: /init → tracing signal...
           </div>
         </div>
         <div class="track">
-          2. cheerleaders \(_//) ☆
+          <div class="line-through">2. cheerleaders \(_//) ☆</div>
           <div class="transition">
             >> packet received. uploading .cheer_emotion
           </div>
           <a href="#bonus1" class="hidden-link">Access hidden cheer.log</a>
         </div>
         <div class="track">
-          3. dem gyozas <▞▚▞> <span class="glitchy">✨</span>
+          <div class="line-through">
+            3. dem gyozas <▞▚▞> <span class="glitchy">✨</span>
+          </div>
           <div class="transition">>> dumpling protocol active</div>
         </div>
         <div class="track">
-          4. cola season bby ~( ̄ ̄)╭╮
+          <div class="line-through">4. cola season bby ~( ̄ ̄)╭╮</div>
           <div class="transition">>> carbonation levels: ✦✦✦</div>
         </div>
         <div class="track">
-          5. oo.. SNAP [---]
+          <div class="line-through">5. oo.. SNAP [---]</div>
           <div class="transition">>> parsing unexpected input...</div>
         </div>
         <div class="track">
-          6. LOOK AT THE MACROS [▓▓▓▓▓▓]
+          <div class="line-through">6. LOOK AT THE MACROS [▓▓▓▓▓▓]</div>
           <div class="transition">>> running macro.trace()</div>
         </div>
         <div class="track">
-          7. RUMBLEEEEE <(>_<)> ⚡
+          <div class="line-through">7. RUMBLEEEEE <(>_<)> ⚡</div>
           <div class="transition">>> EMERGENCY OVERRIDE</div>
         </div>
         <div class="track">
-          8. pushing pixels [█▆▅▇]
+          <div class="line-through">8. pushing pixels [█▆▅▇]</div>
           <div class="transition">>> push_pixel_array() successful</div>
         </div>
         <div class="track">
-          9. lip balm (◕‿◕)✧ 💄
+          <div class="line-through">9. lip balm (◕‿◕)✧ 💄</div>
           <div class="transition">>> balm.log: timestamp 03:47AM</div>
         </div>
         <div class="track">
-          10. NUMBER CRUNCHERS [●▀▀▀▀●]
+          <div class="line-through">10. NUMBER CRUNCHERS [●▀▀▀▀●]</div>
           <div class="transition">>> CRUNCH_MODE: ON</div>
           <a href="#easteregg" class="hidden-link"
             >open /core/mem/crunch.secret</a
