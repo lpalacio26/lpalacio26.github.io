@@ -1,112 +1,76 @@
-const canvas = document.getElementById("pipes-bg");
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
+ class PipeScreensaver {
+            constructor() {
+                this.container = document.getElementById('pipe-container');
+                this.pipeSegments = [];
+                this.currentPosition = { x: 0, y: 0, z: 0 };
+                this.direction = 'right';
+                this.colors = ['yellow', 'orange'];
+                this.pipeLength = 25;
+                this.createPipe();
+                this.animate();
+            }
 
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 0, 150);
+            createPipe() {
+                for (let i = 0; i < this.pipeLength; i++) {
+                    const segment = document.createElement('div');
+                    segment.className = 'pipe-segment';
+                    this.pipeSegments.push(segment);
+                    this.container.appendChild(segment);
+                }
+            }
 
-  // Lighting
-  scene.add(new THREE.AmbientLight(0x555555));
-  const point = new THREE.PointLight(0xffffff, 1);
-  point.position.set(50, 50, 50);
-  scene.add(point);
+            updatePipe() {
+                // Change direction randomly
+                if (Math.random() < 0.02) {
+                    this.direction = ['right', 'left', 'up', 'down'][Math.floor(Math.random() * 4)];
+                }
 
-  // Post-processing
-  const composer = new THREE.EffectComposer(renderer);
-  composer.addPass(new THREE.RenderPass(scene, camera));
+                // Update position based on direction
+                switch(this.direction) {
+                    case 'right': this.currentPosition.x += 50; break;
+                    case 'left': this.currentPosition.x -= 50; break;
+                    case 'up': this.currentPosition.y -= 50; break;
+                    case 'down': this.currentPosition.y += 50; break;
+                }
 
-  // Bloom
-  const bloom = new THREE.UnrealBloomPass(
-    new THREE.Vector2(window.innerWidth, window.innerHeight),
-    0.8,  // strength
-    0.5,  // radius
-    0.85  // threshold
-  );
-  composer.addPass(bloom);
+                // Keep pipe within viewport bounds
+                if (this.currentPosition.x > window.innerWidth - 100) this.direction = 'left';
+                if (this.currentPosition.x < 0) this.direction = 'right';
+                if (this.currentPosition.y > window.innerHeight - 100) this.direction = 'up';
+                if (this.currentPosition.y < 0) this.direction = 'down';
 
-  // Depth-of-Field
-  const bokeh = new THREE.BokehPass(scene, camera, {
-    focus:    100.0,
-    aperture: 0.0005,
-    maxblur:  0.01,
-    width:    window.innerWidth,
-    height:   window.innerHeight
-  });
-  composer.addPass(bokeh);
+                // Update segment positions and colors
+                this.pipeSegments.forEach((segment, index) => {
+                    const hue = (Date.now() * 0.1 + index * 10) % 360;
+                    const color = `hsl(${hue}, 100%, 50%)`;
+                    
+                    segment.style.backgroundColor = color;
+                    segment.style.transform = `
+                        translate3d(
+                            ${this.currentPosition.x - index * 50}px,
+                            ${this.currentPosition.y}px,
+                            ${-index * 50}px
+                        )
+                        rotateZ(${this.direction === 'right' || this.direction === 'left' ? 90 : 0}deg)
+                    `;
+                });
+            }
 
-  // —————————————————————————————————————————————————————
-  // PipeSystem: handles multiple “heads” with fading trails
-  // —————————————————————————————————————————————————————
-  class PipeHead {
-    constructor() {
-      this.path = [ new THREE.Vector3(
-        (Math.random()-0.5)*200,
-        (Math.random()-0.5)*200,
-        (Math.random()-0.5)*200
-      ) ];
-      this.dir  = new THREE.Vector3(
-        ...[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]][Math.floor(Math.random()*6)]
-      );
-      this.segments = [];
-      this.material = new THREE.MeshPhongMaterial({
-        color:  0x00ffcc,
-        transparent: true,
-        opacity: 1
-      });
-      this.maxLen = 100;  // max segments before fade
-    }
+            animate() {
+                this.updatePipe();
+                requestAnimationFrame(() => this.animate());
+            }
+        }
 
-    step() {
-      // choose a new direction (not directly back)
-      const choices = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
-      const next = new THREE.Vector3(...choices[Math.floor(Math.random()*6)]);
-      if (next.dot(this.dir) !== -1) this.dir.copy(next);
+        // Initialize the screensaver
+        window.addEventListener('load', () => {
+            new PipeScreensaver();
+        });
 
-      // next point
-      const last = this.path[this.path.length-1];
-      const nextPoint = last.clone().add(this.dir.clone().multiplyScalar(5));
-      this.path.push(nextPoint);
-
-      // create a tube segment along last→next
-      const curve = new THREE.LineCurve3(last, nextPoint);
-      const geo   = new THREE.TubeGeometry(curve, 4, 0.5, 8, false);
-      const mesh  = new THREE.Mesh(geo, this.material.clone());
-      scene.add(mesh);
-      this.segments.push(mesh);
-
-      // remove old segments when too many & fade oldest
-      if (this.segments.length > this.maxLen) {
-        const old = this.segments.shift();
-        scene.remove(old);
-      }
-      // fade all
-      this.segments.forEach((m,i) => {
-        m.material.opacity = THREE.MathUtils.lerp(0, 1, i / this.segments.length);
-      });
-    }
-  }
-
-  // create several heads for fuller coverage
-  const heads = Array.from({length: 8}, () => new PipeHead());
-
-  // —————————————————————————————————————————————————————
-  // Animation loop
-  // —————————————————————————————————————————————————————
-  function animate() {
-    requestAnimationFrame(animate);
-    heads.forEach(h => h.step());
-    composer.render();
-  }
-  animate();
-
-  // —————————————————————————————————————————————————————
-  // Handle resizing
-  // —————————————————————————————————————————————————————
-  window.addEventListener("resize", () => {
-    const w = window.innerWidth, h = window.innerHeight;
-    renderer.setSize(w, h);
-    composer.setSize(w, h);
-    camera.aspect = w/h;
-    camera.updateProjectionMatrix();
-  });
+        // Add Y2K-style resize effect
+        window.addEventListener('resize', () => {
+            document.body.style.transform = `scale(${1 + Math.random() * 0.02})`;
+            setTimeout(() => {
+                document.body.style.transform = 'scale(1)';
+            }, 100);
+        });
