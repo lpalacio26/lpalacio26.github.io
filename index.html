@@ -584,6 +584,17 @@
       <span id="weather"></span>
       <span id="loading" class="loading-dots" style="display: none"></span>
     </div>
+    <canvas
+      id="pipes-bg"
+      style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -3;
+      "
+    ></canvas>
     <div class="planet-container" id="planetSystem">
       <!-- Planets will be injected here -->
     </div>
@@ -596,13 +607,8 @@
         <label class="flicker">> SUBSCRIBE_MAILING_LIST</label>
         <input
           type="email"
-<<<<<<< HEAD
           placeholder="enter email..."
           required
-=======
-          placeholder="user@domain.neo"
-          requi#030303
->>>>>>> 4a1946f (new bg)
           class="cyber-input"
           aria-label="Enter your email address"
         />
@@ -909,4 +915,15 @@
   <script type="text/javascript" src="ascii_effect.js"></script>
   <script type="text/javascript" src="planets.js"></script>
   <script type="text/javascript" src="crypto.js"></script>
+  <script
+    type="text/javascript "
+    src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/postprocessing/EffectComposer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/postprocessing/RenderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/shaders/CopyShader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/postprocessing/ShaderPass.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/postprocessing/BokehPass.js"></script>
+  <script type="text/javascript" src="pipes.js"></script>
 </html>
