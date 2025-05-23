@@ -6,8 +6,8 @@
     <title>digital gardens, hypertext</title>
     <style>
       body {
-        background-color: red;
-        color: yellow;
+        background-color: #030303;
+        color: #fafafa;
         font-family: "Courier New", Courier, monospace;
         margin: 0;
         padding: 2rem;
@@ -37,7 +37,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: radial-gradient(circle, transparent 40%, red 45%);
+        background: radial-gradient(circle, transparent 40%, #030303 45%);
         pointer-events: none;
         z-index: -1;
         animation: pulse 5s infinite;
@@ -65,7 +65,7 @@
       }
       .track {
         margin: 1rem 0;
-        color: yellow;
+        color: #fafafa;
         animation: quick-flicker 0.1s infinite alternate-reverse;
       }
 
@@ -80,7 +80,7 @@
 
       .shutdown {
         margin-top: 3rem;
-        color: #ff3366;
+        color: #020202;
       }
       .audio {
         margin-top: 0.5rem;
@@ -136,7 +136,7 @@
       /* Increase glitch intensity for headings */
       .glitchy {
         position: relative;
-        color: yellow;
+        color: #fafafa;
       }
       .glitchy::before,
       .glitchy::after {
@@ -153,7 +153,7 @@
       }
       .glitchy::after {
         animation: glitch 3s infinite linear alternate;
-        color: yellow;
+        color: #fafafa;
       }
 
       @media (max-width: 600px) {
@@ -167,7 +167,7 @@
 
       .cursor {
         animation: blink 1s infinite;
-        color: yellow;
+        color: #fafafa;
       }
 
       .terminal {
@@ -175,9 +175,9 @@
       }
 
       .cyber-button {
-        background: red;
+        background: #030303;
         border: 1px solid #33ff99;
-        color: yellow;
+        color: #fafafa;
         padding: 3px 8px;
         font-family: "Courier New", monospace;
         cursor: pointer;
@@ -185,9 +185,9 @@
       }
 
       .cyber-button:hover {
-        background: red;
+        background: #030303;
         color: #000;
-        text-shadow: 0 0 5px red;
+        text-shadow: 0 0 5px #030303;
       }
 
       .loading-dots::after {
@@ -218,12 +218,12 @@
         right: 20px;
         top: 80%;
         transform: translateY(-50%);
-        background: rgba(255, 0, 0, 0.9);
-        border: 1px solid yellow;
+        background: rgba(3, 3, 3, 0.9);
+        border: 1px solid #fafafa;
         padding: 1.5rem;
         width: 300px;
         box-shadow: 0 0 15px #33ff9933;
-        z-index: 10002; /* Above terminal */
+        z-index: 10003; /* Above terminal */
       }
 
       .panel-glitch {
@@ -245,7 +245,7 @@
       .scanline {
         position: absolute;
         height: 2px;
-        background: yellow;
+        background: #fafafa;
         opacity: 0.3;
         animation: scan 4s linear infinite;
         width: calc(
@@ -272,9 +272,9 @@
       }
 
       .cyber-input {
-        background: red;
-        border: 1px solid yellow;
-        color: yellow;
+        background: #030303;
+        border: 1px solid #fafafa;
+        color: #fafafa;
         padding: 8px;
         font-family: "Courier New", monospace;
         transition: all 0.3s;
@@ -282,11 +282,11 @@
 
       .cyber-input:focus {
         outline: none;
-        box-shadow: 0 0 10px yellow;
+        box-shadow: 0 0 10px #fafafa;
       }
 
       .flicker {
-        color: yellow;
+        color: #fafafa;
         animation: flicker 2s infinite alternate;
       }
 
@@ -315,7 +315,7 @@
       }
 
       .form-status {
-        color: yellow;
+        color: #fafafa;
         font-size: 0.9rem;
         min-height: 20px;
       }
@@ -329,17 +329,17 @@
         }
 
         body::after {
-          background: radial-gradient(circle, transparent 100%, red 100%);
+          background: radial-gradient(circle, transparent 100%, #030303 100%);
         }
       }
       .error-glitch {
         animation: glitch 1s infinite;
-        color: #ff3366;
+        color: #020202;
       }
 
       .error-glitch {
         animation: glitch 0.8s infinite;
-        text-shadow: 2px 2px #ff3366, -2px -2px yellow;
+        text-shadow: 2px 2px #020202, -2px -2px #fafafa;
       }
 
       @keyframes glitch {
@@ -367,11 +367,11 @@
         position: fixed;
         top: 40%;
         left: 50%;
-        color: yellow;
+        color: #fafafa;
         font-family: "Courier New", monospace;
         text-align: center;
         white-space: pre;
-        text-shadow: 0 0 10px yellow;
+        text-shadow: 0 0 10px #fafafa;
         opacity: 0.9;
         z-index: 9998;
         pointer-events: none;
@@ -486,7 +486,7 @@
       .planet {
         font-family: monospace;
         white-space: pre;
-        color: yellow;
+        color: #fafafa;
         text-shadow: 0 0 10px currentColor;
         margin: 20px 0;
         transition: all 0.5s ease;
@@ -502,7 +502,7 @@
 
       .orbit {
         position: absolute;
-        border: 1px dashed yellow;
+        border: 1px dashed #fafafa;
         border-radius: 50%;
         animation: spin linear infinite;
       }
@@ -565,7 +565,7 @@
 
       .error-glitch {
         animation: glitch 1s infinite;
-        text-shadow: 2px 2px #ff3366, -2px -2px yellow;
+        text-shadow: 2px 2px #020202, -2px -2px #fafafa;
       }
 
       #cryptoPrice {
@@ -596,8 +596,13 @@
         <label class="flicker">> SUBSCRIBE_MAILING_LIST</label>
         <input
           type="email"
+<<<<<<< HEAD
           placeholder="enter email..."
           required
+=======
+          placeholder="user@domain.neo"
+          requi#030303
+>>>>>>> 4a1946f (new bg)
           class="cyber-input"
           aria-label="Enter your email address"
         />
