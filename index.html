@@ -8,10 +8,10 @@
       #pipe-container {
         perspective: 100px;
         height: 100vh;
-        width:100vw;
+        width: 100vw;
         position: fixed;
-        top:0;
-        left:0;
+        top: 0;
+        left: 0;
       }
 
       .pipe-segment {
@@ -609,10 +609,100 @@
         position: relative;
         z-index: 1;
       }
+
+      /* Film-grain overlay */
+      .noise {
+        pointer-events: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9;
+        mix-blend-mode: overlay;
+        background: repeating-linear-gradient(
+          0deg,
+          rgba(255, 255, 255, 0.05) 0px,
+          rgba(255, 255, 255, 0.05) 1px,
+          transparent 2px,
+          transparent 4px
+        );
+        animation: noiseShift-chaos 1.2s linear infinite;
+      }
+      @keyframes noiseShift-chaos {
+        to {
+          background-position-y: 4px;
+        }
+      }
+
+      /* Pooled meme nodes */
+      .meme {
+        position: fixed;
+        pointer-events: none;
+        z-index: 11; /* above most UI, under your highest layers */
+        image-rendering: -webkit-optimize-contrast;
+        filter: contrast(260%) saturate(260%) brightness(120%)
+          drop-shadow(0 8px 18px rgba(0, 0, 0, 0.6));
+        will-change: transform, opacity, filter;
+        animation: popIn-chaos 140ms ease-out,
+          fry-chaos var(--fry, 1400ms) linear forwards;
+      }
+      @keyframes popIn-chaos {
+        from {
+          transform: scale(0.5) rotate(var(--rot, 0deg));
+          opacity: 0;
+        }
+        to {
+          transform: scale(1) rotate(var(--rot, 0deg));
+          opacity: 1;
+        }
+      }
+      @keyframes fry-chaos {
+        0% {
+          filter: contrast(240%) saturate(240%) brightness(110%);
+        }
+        60% {
+          filter: contrast(380%) saturate(420%) brightness(135%);
+        }
+        100% {
+          filter: contrast(500%) saturate(540%) brightness(150%);
+        }
+      }
+      .spin-chaos {
+        animation: spinny-chaos 2.2s linear infinite;
+      }
+      @keyframes spinny-chaos {
+        from {
+          transform: rotate(0);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ASCII “pop-up” bursts */
+      .ascii-pop {
+        position: fixed;
+        font-family: monospace;
+        font-size: 10px;
+        line-height: 10px;
+        white-space: pre;
+        pointer-events: none;
+        z-index: 50;
+        text-shadow: 0 0 8px currentColor;
+        transition: transform 0.3s ease-out, opacity 0.5s ease-out;
+      }
+
+      /* If you already style #bg canvas in index_old, this won’t conflict */
+      #bg canvas {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+        filter: contrast(1.2) brightness(1.3) drop-shadow(0 0 10px #0ff);
+      }
     </style>
   </head>
   <body>
-      <div id="pipe-container"></div>
+    <div id="pipe-container"></div>
     <div class="data-feed">
       > LIVE FEED :: BTC: <span id="cryptoPrice">--</span> :: WEATHER:
       <span id="weather"></span>
@@ -686,13 +776,6 @@
         <div class="track">
           <div class="line-through">9. lip balm (◕‿◕)✧ 💄</div>
           <div class="transition">>> balm.log: timestamp 03:47AM</div>
-        </div>
-        <div class="track">
-          <div class="line-through">10. NUMBER CRUNCHERS [●▀▀▀▀●]</div>
-          <div class="transition">>> CRUNCH_MODE: ON</div>
-          <a href="#easteregg" class="hidden-link"
-            >open /core/mem/crunch.secret</a
-          >
         </div>
       </div>
       <div class="shutdown">
@@ -928,15 +1011,25 @@
 
       </pre>
     </div>
+    <div class="noise" aria-hidden="true"></div>
+    <audio id="bgmusic" src="./music/intheend.mp3" loop></audio>
+    <div id="bg"></div>
   </body>
-  <script type="text/javascript" src="dom_loading.js"></script>
-  <script type="text/javascript" src="get_user_info.js"></script>
-  <script type="text/javascript" src="typewriter.js"></script>
-  <script type="text/javascript" src="weather_data.js"></script>
-  <script type="text/javascript" src="newsletter_form.js"></script>
-  <script type="text/javascript" src="ascii_art.js"></script>
-  <script type="text/javascript" src="ascii_effect.js"></script>
-  <script type="text/javascript" src="planets.js"></script>
-  <script type="text/javascript" src="crypto.js"></script>
-  <script type="text/javascript" src="pipes.js"></script>
+  <script src="crypto.js" defer></script>
+  <script src="dom_loading.js" defer></script>
+  <script src="get_user_info.js" defer></script>
+  <script src="newsletter_form.js" defer></script>
+  <script src="pipes.js" defer></script>
+  <script src="planets.js" defer></script>
+  <script src="typewriter.js" defer></script>
+  <script src="weather_data.js" defer></script>
+  <script src="ascii_art.js" defer></script>
+  <script src="ascii_effect.js" defer></script>
+    <script src="shitpost.js" defer></script>
+
+  <script>
+    window.addEventListener("load", () => {
+      startAsciiEffect({ delayMs: 3800, cycleMs: 1500 });
+    });
+  </script>
 </html>

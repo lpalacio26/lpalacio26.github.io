@@ -1,99 +1,102 @@
-let analyser;
+// ascii_effect.js — uses frames defined elsewhere (e.g., ascii_art.js)
+// No defaults. No bare identifiers. Just reads whatever globals your file exposes.
 
-// Particle system
-class ParticleSystem {
-  constructor() {
-    this.particles = [];
-    this.canvas = document.createElement("canvas");
-    this.ctx = this.canvas.getContext("2d");
+(function (g) {
+  "use strict";
 
-    // Set canvas styles to cover entire viewport
-    this.canvas.style.position = "fixed";
-    this.canvas.style.top = "0";
-    this.canvas.style.left = "0";
-    this.canvas.style.zIndex = "-1"; // Send to background
-    this.canvas.style.pointerEvents = "none"; // Make click-through
+  const GLOBAL_INTERVAL_KEY = "__asciiInterval";
 
-    document.body.prepend(this.canvas); // Add as first element
-
-    window.addEventListener("resize", this.resize.bind(this));
-    this.resize();
-  }
-
-  resize() {
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
-  }
-
-  createParticles(x, y) {
-    for (let i = 0; i < 20; i++) {
-      const particle = {
-        x: x + Math.random() * 50 - 25,
-        y: y + Math.random() * 50 - 25,
-        vx: Math.random() * 4 - 2,
-        vy: Math.random() * 4 - 2,
-        life: 1,
-      };
-      this.particles.push(particle);
+  // Find frames under common global names your ascii_art.js might be using.
+  function resolveFrames() {
+    const c = [
+      "asciiFrames",   // common
+      "ASCII_FRAMES",  // common
+      "ASCII_ARTS",    // sometimes used
+      "ASCII_ART",
+      "ASCII"
+    ];
+    for (const key of c) {
+      const val = g[key];
+      if (Array.isArray(val) && val.length) return val.map(String);
     }
+    return null;
   }
 
-  update() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    this.particles.forEach((particle, index) => {
-      particle.x += particle.vx;
-      particle.y += particle.vy;
-      particle.life -= 0.02;
-
-      this.ctx.fillStyle = `hsl(${Math.random() * 360}, 100%, 50%)`;
-      this.ctx.fillRect(particle.x, particle.y, 2, 2);
-
-      if (particle.life <= 0) this.particles.splice(index, 1);
-    });
-
-    requestAnimationFrame(() => this.update());
-  }
-}
-
-// Enhanced ASCII generator
-class CyberAscii {
-  constructor() {
-    this.element = document.getElementById("ascii-terminal");
-
-    // Add CSS to keep ASCII art above canvas
-    this.element.style.zIndex = "100";
-
-    this.particleSystem = new ParticleSystem();
-    this.particleSystem.update();
-    this.setupInteractions();
-  }
-
-  setupInteractions() {
-    document.addEventListener("mousemove", (e) => {
-      this.distortAscii(e.clientX, e.clientY);
-      this.particleSystem.createParticles(e.clientX, e.clientY);
+  // Poll briefly so we don’t race script loading
+  function waitForFrames(maxMs = 6000) {
+    const deadline = performance.now() + maxMs;
+    return new Promise((resolve) => {
+      (function tick() {
+        const f = resolveFrames();
+        if (f) return resolve(f);
+        if (performance.now() > deadline) return resolve(null);
+        requestAnimationFrame(tick);
+      })();
     });
   }
 
-  distortAscii(x, y) {
-    const rect = this.element.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-
-    const dx = (x - centerX) / window.innerWidth;
-    const dy = (y - centerY) / window.innerHeight;
-
-    this.element.style.transform = `
-      translate(-50%, -50%)
-      rotate(${dx * 5}deg)
-      scale(${1 + Math.abs(dy)})
-    `;
+  // Restart your CSS morph animation (you already have .morph-transition)
+  function restartMorph(el) {
+    el.classList.remove("morph-transition");
+    // force reflow
+    // eslint-disable-next-line no-unused-expressions
+    el.offsetWidth;
+    el.classList.add("morph-transition");
   }
 
-}
+  async function startAsciiEffect(opts = {}) {
+    const {
+      targetId = "ascii-terminal", // your existing element
+      delayMs = 3600,              // when to show first frame
+      cycleMs = 1500,              // swap speed
+      hueRotate = true,            // random hue each frame
+      maxWaitMs = 6000             // how long to wait for frames to exist
+    } = opts;
 
-// Initialize
-document.addEventListener("DOMContentLoaded", () => {
-  const cyberAscii = new CyberAscii();
-});
+    // Wait for DOM
+    if (document.readyState === "loading") {
+      await new Promise((r) => document.addEventListener("DOMContentLoaded", r, { once: true }));
+    }
+
+    const el = document.getElementById(targetId);
+    if (!el) {
+      console.warn(`[ascii] Target #${targetId} not found`);
+      return;
+    }
+
+    // Wait for frames provided by YOUR ascii_art.js
+    const frames = await waitForFrames(maxWaitMs);
+    if (!frames || frames.length === 0) {
+      console.warn("[ascii] No frames found. Ensure ascii_art.js sets a global array (e.g. window.asciiFrames).");
+      return;
+    }
+
+    // Prevent duplicates if called twice
+    if (g[GLOBAL_INTERVAL_KEY]) {
+      clearInterval(g[GLOBAL_INTERVAL_KEY]);
+      g[GLOBAL_INTERVAL_KEY] = null;
+    }
+
+    // Start after a small delay so it doesn't clash with intro effects
+    setTimeout(() => {
+      let i = 0;
+
+      // initial draw
+      el.textContent = frames[i % frames.length];
+      if (hueRotate) el.style.filter = `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
+      el.style.opacity = 1;
+      restartMorph(el);
+      i++;
+
+      // loop
+      g[GLOBAL_INTERVAL_KEY] = setInterval(() => {
+        el.textContent = frames[i % frames.length];
+        if (hueRotate) el.style.filter = `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
+        restartMorph(el);
+        i++;
+      }, cycleMs);
+    }, Math.max(0, delayMs));
+  }
+
+  g.startAsciiEffect = startAsciiEffect;
+})(window);
