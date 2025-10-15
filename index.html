@@ -8,6 +8,13 @@
     <style>
       :root {
         --grey: #7a7a7a;
+        --accent1: #00fff0; /* teal */
+        --accent2: #ff00ff; /* magenta */
+        --accent3: #9bff00; /* toxic green (sparingly) */
+        --glow-soft: 0 0 6px rgba(0, 255, 240, 0.25),
+          0 0 18px rgba(255, 0, 255, 0.18);
+        --glow-strong: 0 0 12px rgba(0, 255, 240, 0.6),
+          0 0 28px rgba(255, 0, 255, 0.42);
       }
 
       /* Global */
@@ -17,6 +24,20 @@
         filter: grayscale(100%) contrast(120%) brightness(95%);
         overflow: hidden;
         animation: jitter 30s infinite;
+        cursor: url(img/cursor.gif), auto;
+        animation: cursor 0.8s linear infinite;
+      }
+
+      @keyframes cursor {
+        0% {
+          cursor: url(img/cursor_frame_1.gif), auto;
+        }
+        50% {
+          cursor: url(img/cursor_frame_2.gif), auto;
+        }
+        100% {
+          cursor: url(img/cursor_frame_3.gif), auto;
+        }
       }
 
       /* Header image (no gap + slow, almost imperceptible zoom on desktop) */
@@ -116,7 +137,7 @@
         pointer-events: none;
         background: radial-gradient(
           circle at 50% 60%,
-          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0.08),
           rgba(255, 255, 255, 0) 45%
         );
         mix-blend-mode: overlay;
@@ -128,7 +149,7 @@
           opacity: 0;
         }
         50% {
-          opacity: 0.18;
+          opacity: 0.16;
         }
         100% {
           opacity: 0;
@@ -145,12 +166,77 @@
         padding: 24px 20px;
       }
 
+      /* === CYBERPUNK LAYERS === */
+
+      /* Neon fog / color bleed (magenta + teal) */
+      .neon-fog::before {
+        content: "";
+        position: fixed;
+        inset: -10vh;
+        pointer-events: none;
+        z-index: -1;
+        background: radial-gradient(
+            40vw 40vw at 80% 20%,
+            rgba(255, 0, 255, 0.12),
+            transparent 60%
+          ),
+          radial-gradient(
+            36vw 36vw at 15% 70%,
+            rgba(0, 255, 240, 0.12),
+            transparent 60%
+          );
+        filter: blur(40px);
+        mix-blend-mode: screen;
+        animation: fogDrift 40s linear infinite alternate;
+      }
+      @keyframes fogDrift {
+        0% {
+          transform: translate3d(0, 0, 0);
+        }
+        100% {
+          transform: translate3d(-2vw, 1vh, 0);
+        }
+      }
+
+      /* Animated perspective grid (subtle) */
+      .grid::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: -1;
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.9)),
+          repeating-linear-gradient(
+            #0000,
+            #0000 22px,
+            rgba(0, 255, 240, 0.08) 23px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            #0000,
+            #0000 22px,
+            rgba(255, 0, 255, 0.08) 23px
+          );
+        transform: perspective(700px) rotateX(60deg) translateY(20vh);
+        transform-origin: top center;
+        animation: gridScroll 22s linear infinite;
+        box-shadow: inset 0 80vh 120vh rgba(0, 0, 0, 0.6);
+      }
+      @keyframes gridScroll {
+        from {
+          background-position: 0 0, 0 0, 0 0;
+        }
+        to {
+          background-position: 0 0, 0 300px, 300px 0;
+        }
+      }
+
       /* Title + animated dots */
       h1 {
         margin: 0;
         line-height: 1;
         color: rgb(200, 200, 200);
-        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+        font-family: monospace;
         font-size: 64px;
         letter-spacing: -3px;
         text-shadow: 0 0 0.1px #aaa, 0 0 0.1px #fff, 0 0 10px #ccc;
@@ -183,10 +269,10 @@
       }
       .subscribe input[type="email"],
       .subscribe button {
-        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+        font-family: monospace;
       }
       .subscribe input[type="email"]::placeholder {
-        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+        font-family: monospace;
       }
       .subscribe input[type="email"] {
         height: 52px;
@@ -253,6 +339,18 @@
           gap: 16px;
           flex-direction: column;
           align-items: flex-start;
+        }
+
+        .bottom::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: -10px;
+          height: 2px;
+          background: linear-gradient(90deg, var(--accent2), var(--accent1));
+          filter: blur(0.4px);
+          box-shadow: var(--glow-soft);
         }
         h1 {
           font-size: 40px;
@@ -368,9 +466,32 @@
         mix-blend-mode: screen;
         backdrop-filter: blur(2px);
       }
+
+      .ascii-glitch {
+        position: fixed;
+        top: 40%;
+        left: 50%;
+        color: white;
+        font-family: "Courier", monospace;
+        text-align: center;
+        white-space: pre;
+        text-shadow: 0 0 10px white;
+        opacity: 0.9;
+        z-index: 9998;
+        pointer-events: none;
+        animation: glitch-fade 5s infinite;
+        mix-blend-mode: screen;
+        filter: hue-rotate(0deg);
+        transition: filter 0.3s;
+        font-size: 2rem;
+      }
     </style>
   </head>
-  <body class="grain scanlines vignette pulse texture neon-glow citylights reflection">
+  <body
+    class="grain scanlines vignette pulse texture neon-glow citylights reflection"
+  >
+    <div id="ascii-terminal" class="ascii-glitch"></div>
+
     <img class="header" src="/img/header.png" alt="Header" />
 
     <div class="bottom">
@@ -407,5 +528,7 @@
         }, 500);
       })();
     </script>
+    <script src="ascii_art.js"></script>
+    <script src="ascii_effect.js"></script>
   </body>
 </html>

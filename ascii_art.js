@@ -1,4 +1,5 @@
-window.asciiFrames = [
+const asciiFrames = [
+
   `
     (\\___/)
     ( • • )
@@ -43,7 +44,7 @@ window.asciiFrames = [
 ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█
 ░▒▓█████▓▒░▒▓█▓▒░░▒▓█▓▒░
 `,
-  `
+`
                      .::.
                   .:'  .:
         ,MMM8&&&.:'   .:'
@@ -56,7 +57,7 @@ window.asciiFrames = [
 :'  .:'
 '::'  
 `,
-  `
+`
 % +=============================================================+
 % | ____ ___ _     _______   ______  ____ ___ _     _______   __|
 % ||  _ \_ _| |   | ____\ \ / / ___||  _ \_ _| |   | ____\ \ / /|
@@ -65,7 +66,9 @@ window.asciiFrames = [
 % ||____/___|_____|_____| |_| |____/|____/___|_____|_____| |_|  |
 % +=============================================================+ 
 `,
+  
 ];
+
 let asciiInterval;
 
 function generateRandomAscii() {
@@ -74,44 +77,12 @@ function generateRandomAscii() {
   asciiTerminal.textContent = asciiFrames[randomIndex];
 }
 
+
 // Initialize with random art and rotation
 document.addEventListener("DOMContentLoaded", () => {
   generateRandomAscii();
   asciiInterval = setInterval(generateRandomAscii, 5000);
+
 });
 
-// Ensure global visibility of ASCII frames
-window.ASCII_ARTS =
-  typeof asciiFrames !== "undefined"
-    ? asciiFrames
-    : typeof ASCII_FRAMES !== "undefined"
-    ? ASCII_FRAMES
-    : typeof FRAMES !== "undefined"
-    ? FRAMES
-    : [];
 
-// --- ASCII global shim (put at the very end of ascii_art.js) ---
-(function (g) {
-  // If your file declared `const asciiFrames = [...]`, make it global:
-  if (
-    typeof g.asciiFrames === "undefined" &&
-    typeof asciiFrames !== "undefined"
-  ) {
-    g.asciiFrames = asciiFrames;
-  }
-  // Also support other common names:
-  if (
-    typeof g.asciiFrames === "undefined" &&
-    typeof ASCII_FRAMES !== "undefined"
-  ) {
-    g.asciiFrames = ASCII_FRAMES;
-  }
-  if (typeof g.asciiFrames === "undefined" && typeof FRAMES !== "undefined") {
-    g.asciiFrames = FRAMES;
-  }
-  // Canonical global used by the effect:
-  if (typeof g.ASCII_ARTS === "undefined") {
-    g.ASCII_ARTS = g.asciiFrames || [];
-  }
-})(window);
-// --- end shim ---
