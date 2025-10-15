@@ -3,420 +3,165 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>digital gardens, hypertext</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico" />
+    <title>DILEYSDILEY</title>
     <style>
-      #pipe-container {
-        perspective: 100px;
-        height: 100vh;
-        width: 100vw;
-        position: fixed;
-        top: 0;
-        left: 0;
+      :root {
+        --grey: #7a7a7a;
       }
 
-      .pipe-segment {
-        position: absolute;
-        width: 100px;
-        height: 50px;
-        background: red;
-        transform-style: preserve-3d;
-        transition: all 0.5s linear;
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-      }
+      /* Global */
       body {
-        background-color: red;
-        color: yellow;
-        font-family: "Courier New", Courier, monospace;
         margin: 0;
-        padding: 2rem;
-      }
-      body::before {
-        content: "";
-        position: fixed;
-        top: 0px;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: repeating-linear-gradient(
-          to bottom,
-          rgba(255, 0, 0, 0.03),
-          rgba(0, 0, 0, 0.03) 1px,
-          transparent 2px
-        );
-        pointer-events: none;
-        z-index: 9999;
+        background: #080808;
+        filter: grayscale(100%) contrast(120%) brightness(95%);
+        overflow: hidden;
+        animation: jitter 30s infinite;
       }
 
-      /* Add to style */
-      body::after {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
+      /* Header image (no gap + slow, almost imperceptible zoom on desktop) */
+      .header {
+        display: block;
         width: 100%;
-        height: 100%;
-        background: radial-gradient(circle, transparent 40%, red 45%);
-        pointer-events: none;
-        z-index: -1;
-        animation: pulse 5s infinite;
+        filter: grayscale(100%) contrast(120%);
+        transform-origin: center center;
+        animation: slowZoom 28s ease-in-out infinite alternate;
       }
-
-      @keyframes pulse {
+      @keyframes slowZoom {
         0% {
           transform: scale(1);
         }
-        50% {
-          transform: scale(1.05);
-        }
         100% {
-          transform: scale(1);
+          transform: scale(1.03);
         }
       }
 
-      .terminal {
-        position: relative;
-        z-index: 10001; /* Above everything */
-      }
-
-      .tracklist {
-        margin-top: 2rem;
-      }
-      .track {
-        margin: 1rem 0;
-        color: yellow;
-        animation: quick-flicker 0.1s infinite alternate-reverse;
-      }
-
-      .line-through {
-        text-decoration: line-through;
-      }
-      .transition {
-        color: #999;
-        font-size: 0.9rem;
-        margin-top: 0.5rem;
-      }
-
-      .shutdown {
-        margin-top: 3rem;
-        color: yellow;
-      }
-      .audio {
-        margin-top: 0.5rem;
-      }
-      .hidden-link {
-        display: block;
-        margin-top: 0.5rem;
-        font-size: 0.85rem;
-        color: #66ccff;
-        text-decoration: none;
-      }
-      .typewriter-text::after {
-        content: "|";
-        animation: blink 1s infinite;
-      }
-      @keyframes blink {
+      /* Title flicker */
+      @keyframes flicker {
         0%,
-        50% {
+        8%,
+        9%,
+        11%,
+        100% {
           opacity: 1;
         }
-        51%,
+        9.5%,
+        10%,
+        45.5% {
+          opacity: 0.85;
+        }
+        46%,
+        46.5% {
+          opacity: 0.6;
+        }
+        70% {
+          opacity: 0.92;
+        }
+      }
+
+      /* Grit overlays */
+      .grain::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.08;
+        mix-blend-mode: overlay;
+        background-image: radial-gradient(
+            transparent 0.9px,
+            rgba(255, 255, 255, 0.15) 1px
+          ),
+          radial-gradient(transparent 0.9px, rgba(255, 255, 255, 0.08) 1px);
+        background-size: 3px 3px, 5px 5px;
+        background-position: 0 0, 1px 1px;
+      }
+
+      .scanlines::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.05;
+        background: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.1) 0,
+          rgba(255, 255, 255, 0.1) 1px,
+          transparent 2px,
+          transparent 3px
+        );
+        mix-blend-mode: soft-light;
+      }
+
+      .vignette::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse at center,
+          rgba(0, 0, 0, 0) 40%,
+          rgba(0, 0, 0, 0.35) 75%,
+          rgba(0, 0, 0, 0.7) 100%
+        );
+      }
+
+      /* Soft pulsing glow */
+      .pulse {
+        position: relative;
+      }
+      .pulse::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          circle at 50% 60%,
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0) 45%
+        );
+        mix-blend-mode: overlay;
+        opacity: 0;
+        animation: pulseGlow 5s ease-in-out infinite;
+      }
+      @keyframes pulseGlow {
+        0% {
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.18;
+        }
         100% {
           opacity: 0;
         }
       }
 
-      @keyframes glitch {
-        0% {
-          clip: rect(5px, 9999px, 50px, 0);
-          transform: translate(0);
-        }
-        20% {
-          clip: rect(15px, 9999px, 35px, 0);
-          transform: translate(-5px, 5px);
-        }
-        40% {
-          clip: rect(10px, 9999px, 45px, 0);
-          transform: translate(5px, -5px);
-        }
-        60% {
-          clip: rect(5px, 9999px, 55px, 0);
-          transform: translate(-5px, 5px);
-        }
-        80% {
-          clip: rect(15px, 9999px, 35px, 0);
-          transform: translate(5px, -5px);
-        }
-        100% {
-          clip: rect(5px, 9999px, 50px, 0);
-          transform: translate(0);
-        }
-      }
-      /* Increase glitch intensity for headings */
-      .glitchy {
-        position: relative;
-        color: yellow;
-      }
-      .glitchy::before,
-      .glitchy::after {
-        content: attr(data-text);
-        position: absolute;
-        left: 0;
-        top: 0;
-        opacity: 0.8;
-        clip: rect(0, 900px, 0, 0);
-      }
-      .glitchy::before {
-        animation: glitch 2s infinite linear alternate-reverse;
-        color: white;
-      }
-      .glitchy::after {
-        animation: glitch 3s infinite linear alternate;
-        color: yellow;
-      }
-
-      @media (max-width: 600px) {
-        body {
-          padding: 1rem;
-        }
-        .terminal {
-          padding: 1rem;
-        }
-      }
-
-      .cursor {
-        animation: blink 1s infinite;
-        color: yellow;
-      }
-
-      .terminal {
-        animation: typeSound 0.1s infinite;
-      }
-
-      .cyber-button {
-        background: red;
-        border: 1px solid #33ff99;
-        color: yellow;
-        padding: 3px 8px;
-        font-family: "Courier New", monospace;
-        cursor: pointer;
-        transition: all 0.3s;
-      }
-
-      .cyber-button:hover {
-        background: red;
-        color: #000;
-        text-shadow: 0 0 5px red;
-      }
-
-      .loading-dots::after {
-        content: "";
-        animation: dots 1s infinite;
-        margin-left: 5px;
-      }
-
-      @keyframes dots {
-        0%,
-        20% {
-          content: "";
-        }
-        40% {
-          content: ".";
-        }
-        60% {
-          content: "..";
-        }
-        80%,
-        100% {
-          content: "...";
-        }
-      }
-
-      .cyber-subscribe {
-        position: fixed;
-        right: 50%;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(255, 0, 0, 0.9);
-        border: 1px solid yellow;
-        padding: 1.5rem;
-        width: 300px;
-        box-shadow: 0 0 15px #33ff9933;
-        z-index: 10003; /* Above terminal */
-      }
-
-      .panel-glitch {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background: repeating-linear-gradient(
-          0deg,
-          transparent 0px,
-          transparent 2px,
-          rgba(51, 255, 153, 0.1) 3px,
-          rgba(51, 255, 153, 0.1) 4px
-        );
-        pointer-events: none;
-        left: 0;
-        top: 0;
-      }
-
-      .scanline {
-        position: absolute;
-        height: 2px;
-        background: yellow;
-        opacity: 0.3;
-        animation: scan 4s linear infinite;
-        width: calc(
-          100% + 3rem
-        ); /* Stretch across full width including padding */
-        top: 0;
-        left: -1.5rem;
-      }
-
-      @keyframes scan {
-        0% {
-          top: -10%;
-        }
-        100% {
-          top: 110%;
-        }
-      }
-
-      .cyber-form {
-        position: relative;
+      /* Bottom bar */
+      .bottom {
         display: flex;
-        flex-direction: column;
-        gap: 1rem;
+        align-items: center;
+        gap: 20px;
+        justify-content: space-between;
+        border-top: 10px solid var(--grey);
+        padding: 24px 20px;
       }
 
-      .cyber-input {
-        background: red;
-        border: 1px solid yellow;
-        color: yellow;
-        padding: 8px;
-        font-family: "Courier New", monospace;
-        transition: all 0.3s;
+      /* Title + animated dots */
+      h1 {
+        margin: 0;
+        line-height: 1;
+        color: rgb(200, 200, 200);
+        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+        font-size: 64px;
+        letter-spacing: -3px;
+        text-shadow: 0 0 0.1px #aaa, 0 0 0.1px #fff, 0 0 10px #ccc;
+        animation: flicker 10s infinite steps(1, end);
+        white-space: nowrap;
+        text-shadow: 0 0 2px #aaa, 0 0 6px #0ff, 0 0 14px #0ff, 0 0 30px #0ff;
+        animation: flicker 6s infinite steps(1, end),
+          hueShift 8s linear infinite;
       }
 
-      .cyber-input:focus {
-        outline: none;
-        box-shadow: 0 0 10px yellow;
-      }
-
-      .flicker {
-        color: yellow;
-        animation: flicker 2s infinite alternate;
-      }
-
-      @keyframes flicker {
-        0% {
-          opacity: 0.8;
-        }
-        50% {
-          opacity: 0.6;
-        }
-        100% {
-          opacity: 1;
-        }
-      }
-
-      @keyframes quick-flicker {
-        0% {
-          opacity: 0.9;
-        }
-        50% {
-          opacity: 0.8;
-        }
-        100% {
-          opacity: 1;
-        }
-      }
-
-      .form-status {
-        color: yellow;
-        font-size: 0.9rem;
-        min-height: 20px;
-      }
-
-      @media (max-width: 768px) {
-        .cyber-subscribe {
-          position: static;
-          width: auto;
-          margin: 2rem 0;
-          transform: none;
-        }
-
-        body::after {
-          background: radial-gradient(circle, transparent 100%, red 100%);
-        }
-      }
-      .error-glitch {
-        animation: glitch 1s infinite;
-        color: yellow;
-      }
-
-      .error-glitch {
-        animation: glitch 0.8s infinite;
-        text-shadow: 2px 2px, yellow, -2px -2px yellow;
-      }
-
-      @keyframes glitch {
-        0% {
-          transform: translate(0);
-        }
-        20% {
-          transform: translate(-2px, 2px);
-        }
-        40% {
-          transform: translate(2px, -2px);
-        }
-        60% {
-          transform: translate(-1px, 1px);
-        }
-        80% {
-          transform: translate(1px, -1px);
-        }
-        100% {
-          transform: translate(0);
-        }
-      }
-
-      .ascii-glitch {
-        position: fixed;
-        top: 40%;
-        left: 50%;
-        color: yellow;
-        font-family: "Courier New", monospace;
-        text-align: center;
-        white-space: pre;
-        text-shadow: 0 0 10px yellow;
-        opacity: 0.9;
-        z-index: 9998;
-        pointer-events: none;
-        animation: glitch-fade 5s infinite;
-        mix-blend-mode: screen;
-        filter: hue-rotate(0deg);
-        transition: filter 0.3s;
-        font-size: 2rem;
-      }
-
-      .ascii-particle {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-        animation: particle-fall 1s linear;
-      }
-
-      @keyframes particle-fall {
-        from {
-          transform: translateY(-100vh);
-        }
-        to {
-          transform: translateY(100vh);
-        }
-      }
-
-      @keyframes hue-shift {
+      @keyframes hueShift {
         0% {
           filter: hue-rotate(0deg);
         }
@@ -424,610 +169,243 @@
           filter: hue-rotate(360deg);
         }
       }
-
-      .morph-transition {
-        animation: morph 2s ease-in-out;
+      .dots {
+        display: inline-block;
+        width: 3ch;
+        text-align: left;
       }
 
-      @keyframes morph {
+      /* Subscribe form */
+      .subscribe {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .subscribe input[type="email"],
+      .subscribe button {
+        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+      }
+      .subscribe input[type="email"]::placeholder {
+        font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+      }
+      .subscribe input[type="email"] {
+        height: 52px;
+        width: min(44vw, 420px);
+        padding: 0 14px;
+        border: 1px solid #3a3a3a;
+        border-radius: 2px;
+        background: #121212;
+        color: #e6e6e6;
+        font-size: 18px; /* >=16px prevents iOS zoom */
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+      }
+      .subscribe input[type="email"]:focus {
+        border-color: #bfbfbf;
+        box-shadow: 0 0 12px rgba(200, 200, 200, 0.25);
+      }
+      .subscribe button {
+        height: 52px;
+        padding: 0 20px;
+        border: 0;
+        border-radius: 2px;
+        background: #1a1a1a;
+        color: #e6e6e6;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.15) inset;
+        transition: transform 0.08s ease, box-shadow 0.2s ease, filter 0.2s ease;
+      }
+      .subscribe button:hover {
+        box-shadow: 0 0 18px rgba(255, 255, 255, 0.22) inset;
+        filter: brightness(110%);
+      }
+      .subscribe button:active {
+        transform: translateY(1px) scale(0.99);
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* Mobile */
+      @media (max-width: 1200px) {
+        /* Header behaves like a 400px-tall hero with COVER crop */
+        .header {
+          height: 500px;
+          width: 100%;
+          object-fit: cover; /* fill the frame, crop overflow */
+          object-position: center; /* center focus */
+          animation: slowZoom 24s ease-in-out infinite alternate;
+        }
+
+        .bottom {
+          padding: 16px 12px;
+          gap: 16px;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        h1 {
+          font-size: 40px;
+          letter-spacing: -1px;
+        }
+
+        /* Form stacks, full-width controls, readable sizes */
+        .subscribe {
+          width: 100%;
+          flex-direction: column;
+          padding-right: 0;
+        }
+        .subscribe input[type="email"] {
+          border-width: 1px;
+          width: 100%;
+        }
+        .subscribe button {
+          height: 54px;
+          font-size: 18px;
+        }
+      }
+
+      /* Grungy surface texture overlay */
+      .texture::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("/img/noise.jpg"); /* ideally a semi-transparent PNG or JPEG */
+        background-size: cover;
+        background-position: center;
+        mix-blend-mode: multiply;
+        opacity: 0.2; /* adjust from 0.1–0.3 for stronger */
+        pointer-events: none;
+      }
+
+      .neon-glow::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+            circle at 70% 40%,
+            rgba(255, 0, 255, 0.07),
+            transparent 60%
+          ),
+          radial-gradient(
+            circle at 20% 70%,
+            rgba(0, 200, 255, 0.07),
+            transparent 60%
+          );
+        mix-blend-mode: screen;
+        pointer-events: none;
+      }
+
+      .citylights::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(
+            circle at 10% 20%,
+            rgba(255, 255, 255, 0.05) 0 1px,
+            transparent 3px
+          ),
+          radial-gradient(
+            circle at 80% 70%,
+            rgba(255, 255, 255, 0.05) 0 1px,
+            transparent 3px
+          ),
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(255, 255, 255, 0.05) 0 1px,
+            transparent 3px
+          );
+        background-size: 300% 300%;
+        animation: moveLights 60s linear infinite;
+        mix-blend-mode: screen;
+        pointer-events: none;
+      }
+      @keyframes moveLights {
+        from {
+          background-position: 0% 0%;
+        }
+        to {
+          background-position: 100% 100%;
+        }
+      }
+
+      @keyframes jitter {
         0%,
         100% {
-          opacity: 1;
-          transform: scale(1);
+          transform: translate(0, 0) rotate(0deg);
+        }
+        25% {
+          transform: translate(-0.2px, 0.3px) rotate(0.1deg);
         }
         50% {
-          opacity: 0.2;
-          transform: scale(0.9);
+          transform: translate(0.3px, -0.2px) rotate(-0.1deg);
+        }
+        75% {
+          transform: translate(-0.1px, 0.2px) rotate(0.02deg);
         }
       }
 
-      @keyframes glitch-fade {
-        0% {
-          opacity: 0;
-        }
-
-        1% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.8;
-        }
-        100% {
-          opacity: 0;
-        }
-      }
-
-      .ascii-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        z-index: -2;
-        opacity: 0.5; /* Optional: make text less distracting */
-      }
-
-      .ascii-background pre {
-        white-space: pre;
-        font-family: monospace;
-        max-width: 100%;
-        max-height: 100%;
-        margin: 0;
-        padding: 20px;
-        text-align: center;
-        font-size: 0.26rem; /* Start with base size */
-        letter-spacing: 0.01rem;
-      }
-
-      /* Optional: Responsive font scaling */
-      @media (max-width: 768px) {
-        .ascii-background pre {
-          font-size: 0.25rem; /* Makes ASCII unreadable on mobile */
-          letter-spacing: 0.01rem;
-        }
-      }
-
-      .planet-container {
-        /* Replace existing styles with */
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        z-index: 10001; /* Just above ASCII */
-        width: 100vw;
-        height: 100vh;
-        pointer-events: none;
-      }
-      .planet {
-        font-family: monospace;
-        white-space: pre;
-        color: yellow;
-        text-shadow: 0 0 10px currentColor;
-        margin: 20px 0;
-        transition: all 0.5s ease;
-        cursor: pointer;
-        position: relative;
-        z-index: 2;
-      }
-
-      .planet:hover {
-        transform: scale(1.1);
-        filter: hue-rotate(45deg);
-      }
-
-      .orbit {
-        position: absolute;
-        border: 1px dashed yellow;
-        border-radius: 50%;
-        animation: spin linear infinite;
-      }
-
-      .orbit-container {
-        position: absolute;
-        top: 50%;
-        left: 60%;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-        width: 100%;
-        height: 100%;
-      }
-
-      @keyframes spin {
-        from {
-          transform: rotate(0deg);
-        }
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      @keyframes orbit {
-        from {
-          transform: rotate(0deg) translateX(150px) rotate(0deg);
-        }
-        to {
-          transform: rotate(360deg) translateX(150px) rotate(-360deg);
-        }
-      }
-
-      .moon {
-        position: absolute;
-        font-size: 10px;
-        color: #ccc;
-        animation: orbit linear infinite;
-        z-index: 1;
-        transform: translate(-50%, -50%);
-      }
-
-      body {
-        margin: 0;
-        overflow: vertical;
-        cursor: url(img/cursor.gif), auto;
-        animation: cursor 0.8s linear infinite;
-      }
-
-      @keyframes cursor {
-        0% {
-          cursor: url(img/cursor_frame_1.gif), auto;
-        }
-        50% {
-          cursor: url(img/cursor_frame_2.gif), auto;
-        }
-        100% {
-          cursor: url(img/cursor_frame_3.gif), auto;
-        }
-      }
-
-      .error-glitch {
-        animation: glitch 1s infinite;
-        text-shadow: 2px 2px, yellow, -2px -2px yellow;
-      }
-
-      #cryptoPrice {
-        cursor: pointer;
-        transition: opacity 0.3s;
-      }
-
-      #cryptoPrice:hover {
-        opacity: 0.8;
-      }
-
-      /* make the canvas fill the screen, sit behind everything */
-      #bg canvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: -1;
-        filter: contrast(1.2) brightness(1.3) drop-shadow(0 0 10px #0ff);
-      }
-      #content {
-        position: relative;
-        z-index: 1;
-      }
-
-      /* Film-grain overlay */
-      .noise {
-        pointer-events: none;
+      .reflection::after {
+        content: "";
         position: fixed;
         inset: 0;
-        z-index: 9;
-        mix-blend-mode: overlay;
-        background: repeating-linear-gradient(
-          0deg,
-          rgba(255, 255, 255, 0.05) 0px,
-          rgba(255, 255, 255, 0.05) 1px,
-          transparent 2px,
-          transparent 4px
+        pointer-events: none;
+        background: linear-gradient(
+          to top,
+          rgba(255, 255, 255, 0.03),
+          transparent 40%
         );
-        animation: noiseShift-chaos 1.2s linear infinite;
-      }
-      @keyframes noiseShift-chaos {
-        to {
-          background-position-y: 4px;
-        }
-      }
-
-      /* Pooled meme nodes */
-      .meme {
-        position: fixed;
-        pointer-events: none;
-        z-index: 11; /* above most UI, under your highest layers */
-        image-rendering: -webkit-optimize-contrast;
-        filter: contrast(260%) saturate(260%) brightness(120%)
-          drop-shadow(0 8px 18px rgba(0, 0, 0, 0.6));
-        will-change: transform, opacity, filter;
-        animation: popIn-chaos 140ms ease-out,
-          fry-chaos var(--fry, 1400ms) linear forwards;
-      }
-      @keyframes popIn-chaos {
-        from {
-          transform: scale(0.5) rotate(var(--rot, 0deg));
-          opacity: 0;
-        }
-        to {
-          transform: scale(1) rotate(var(--rot, 0deg));
-          opacity: 1;
-        }
-      }
-      @keyframes fry-chaos {
-        0% {
-          filter: contrast(240%) saturate(240%) brightness(110%);
-        }
-        60% {
-          filter: contrast(380%) saturate(420%) brightness(135%);
-        }
-        100% {
-          filter: contrast(500%) saturate(540%) brightness(150%);
-        }
-      }
-      .spin-chaos {
-        animation: spinny-chaos 2.2s linear infinite;
-      }
-      @keyframes spinny-chaos {
-        from {
-          transform: rotate(0);
-        }
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      /* ASCII “pop-up” bursts */
-      .ascii-pop {
-        position: fixed;
-        font-family: monospace;
-        font-size: 10px;
-        line-height: 10px;
-        white-space: pre;
-        pointer-events: none;
-        z-index: 50;
-        text-shadow: 0 0 8px currentColor;
-        transition: transform 0.3s ease-out, opacity 0.5s ease-out;
-      }
-
-      /* If you already style #bg canvas in index_old, this won’t conflict */
-      #bg canvas {
-        position: fixed;
-        inset: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: -1;
-        filter: contrast(1.2) brightness(1.3) drop-shadow(0 0 10px #0ff);
+        mix-blend-mode: screen;
+        backdrop-filter: blur(2px);
       }
     </style>
   </head>
-  <body>
-    <div id="pipe-container"></div>
-    <div class="data-feed">
-      > LIVE FEED :: BTC: <span id="cryptoPrice">--</span> :: WEATHER:
-      <span id="weather"></span>
-      <span id="loading" class="loading-dots" style="display: none"></span>
-    </div>
-    <div class="planet-container" id="planetSystem">
-      <!-- Planets will be injected here -->
-    </div>
-    <div id="ascii-terminal" class="ascii-glitch"></div>
+  <body class="grain scanlines vignette pulse texture neon-glow citylights reflection">
+    <img class="header" src="/img/header.png" alt="Header" />
 
-    <div class="cyber-subscribe">
-      <div class="panel-glitch"></div>
-      <form id="newsletterForm" class="cyber-form">
-        <div class="scanline"></div>
-        <label class="flicker">> SUBSCRIBE_MAILING_LIST</label>
+    <div class="bottom">
+      <h1>DILEYSDILEY PRESENTS<span class="dots" id="dots">..</span></h1>
+
+      <form
+        class="subscribe"
+        action="#"
+        method="post"
+        onsubmit="event.preventDefault(); alert('Thanks!');"
+      >
+        <label for="email" class="sr-only">Email</label>
         <input
+          id="email"
+          name="email"
           type="email"
-          placeholder="enter email..."
+          inputmode="email"
+          autocomplete="email"
+          placeholder="ENTER YOUR EMAIL"
           required
-          class="cyber-input"
-          aria-label="Enter your email address"
         />
-        <button type="submit" class="cyber-button">[EXECUTE SUBSCRIBE]</button>
-        <div id="formStatus" class="form-status"></div>
+        <button type="submit">SUBSCRIBE</button>
       </form>
     </div>
-    <div class="terminal">
-      <div class="typewriter-text"></div>
-      <div class="tracklist">
-        <div class="track quick-flicker">
-          <div class="line-through">
-            1. U HAD ME AT HELLO WORLD 💫 [ ≡≡≡>⟆⟆⟆ ]
-          </div>
-          <div class="transition">
-            > boot sequence: /init → tracing signal...
-          </div>
-        </div>
-        <div class="track">
-          <div class="line-through">2. cheerleaders \(_//) ☆</div>
-          <div class="transition">
-            >> packet received. uploading .cheer_emotion
-          </div>
-          <a href="#bonus1" class="hidden-link">Access hidden cheer.log</a>
-        </div>
-        <div class="track">
-          <div class="line-through">
-            3. dem gyozas <▞▚▞> <span class="glitchy">✨</span>
-          </div>
-          <div class="transition">>> dumpling protocol active</div>
-        </div>
-        <div class="track">
-          <div class="line-through">4. cola season bby ~( ̄ ̄)╭╮</div>
-          <div class="transition">>> carbonation levels: ✦✦✦</div>
-        </div>
-        <div class="track">
-          <div class="line-through">5. oo.. SNAP [---]</div>
-          <div class="transition">>> parsing unexpected input...</div>
-        </div>
-        <div class="track">
-          <div class="line-through">6. LOOK AT THE MACROS [▓▓▓▓▓▓]</div>
-          <div class="transition">>> running macro.trace()</div>
-        </div>
-        <div class="track">
-          <div class="line-through">7. RUMBLEEEEE <(>_<)> ⚡</div>
-          <div class="transition">>> EMERGENCY OVERRIDE</div>
-        </div>
-        <div class="track">
-          <div class="line-through">8. pushing pixels [█▆▅▇]</div>
-          <div class="transition">>> push_pixel_array() successful</div>
-        </div>
-        <div class="track">
-          <div class="line-through">9. lip balm (◕‿◕)✧ 💄</div>
-          <div class="transition">>> balm.log: timestamp 03:47AM</div>
-        </div>
-      </div>
-      <div class="shutdown">
-        >> shutting down...<br />
-        >> saving cache to dream.mem<br />
-        >> /log off<br />
-        >> connection lost.
-      </div>
-    </div>
 
-    <div class="ascii-background">
-      <pre>
-        *++#=*=+==*#*###**##*****%#*=*+=*#*+*%#+*#*+%%**%*****==#**#%#+*#++*###*##-=**+##**##+*##*+*#####+=*+++*#**#==*%*##%*#*#+*#=*+%+*#*++*#*+*#*##**%+**#++*#*+=*=+**=##+%##***+*#%#+*-*=.#=+*##-##+**%*#=#*:=.+..#.+-=@.#.::*#**#:.:+*+.*#**%##*#%*%%###***.+.+-..+.:*++*=:*=-**##==#+==+*+**+*#*=**#=+%###***#+++#%#*#*==+#**%#*+*#+=*+==+:.-+==...**#***##++##**%+-*#=+*%#*#%***++*+*=#+++**-=#+=#####**+#*+#%##%
-+=###*%#*+##+##**#%#=*#++##+%*%*+#*+###%*#*#+*==##***#+++##*%####%=+*#-*#*=*#*+*@***#####++##*+#**+#*=**#*###**#*=*#-*==.-......:.......................................................-..=.*....+.:..=.*.=..=.-....+...+*+=**%@#*#**#+*##**#*=**++#**=**==#==#-=**+#.:+.:=..:..-....-:....+.....+.....*...........-.-....................#*=...=*****+#*+**++#*##%#**+*=**++#*+=*#=+%**###+*:+**#+##**#*=**++#
-#*#+*+*%%*##*=**+*%###%#*%*#*%%#*##+***++#*+#%*+****%%#*###=+*++*%#**#*###*#@#*=#*+++#=###*+###%%####**#*=+##=+%#+*++=.-............................:....=...........-..-.*....*......*.+=.+.+.++:#-%-=+-+=**+***+**=+%%***#+=+...:......*#=+#%***#+*%++.........................=....++..........-...................-.....*.=-.+-+*.:=.:-+##+***=*#**#%*+#+****++**+*#+=#**+*#**#**=*++=#*+**#=+*++#**###+*#+*
-#++**:.....%......::.......=.............=......*...........+@##*%%##*#=+*+++#+###**#**#%%%###+=*+-+#*###+=+#+*%#*###+:*:-++=.#*=#++=*#.-+%*#*#++=**##*###==#=+**++##*+**+**#####+-**-+##*#%*#**%**##-++*+-**.*#%+=#++.*#*%##+..........:+%**#*#%**#+*+-....:.:**.=-##+=#=**+=#=++**=+#*+**+=#*=*#####*++#=***++###+*+=+*###=++*+*=*+==*....=*...**+#*++%+*+#+++*=-##*#%%***#+**#**%+++*-:+*-**##*#*+*#**#*#**++
-%####*.............=...*+........*..............+...=%......###+*-+=##***##++#*+#%##*#*=***###****+=*#*#@###%**###+#%+*#-+*=+:#%*#*#**#***%*=#.+....*....-.:-...:-...*...........:....+....+........-..+...-+...=-...=...-**#+*#*++*++*#*+##*+*+*+#**##*-*-:=#**==*:*#**#..+:.:...................+.....:..............................:.........++###==**.+######**#+*###**#==++-=#*###*++**+#**###*++=-*+=*#*+
-##+*#+............-:.....+...=+.......*.........*.....#....#=*#*=##++***##%+#%#***#+*#*+#**+#######******#+*#%=**+=*#*.........-#+##*=#.:=-*.=..:...=....#....*......-..=.=....*..:.*.#....#....+.=.#-.::*..=.-.=::#.*+..**##.:#==.......+**+=*%+*******......*:.....*........:...................*.....-.....=.................:*:.:.=-:-::+#-+++++*##**#*+*+=+******-=#**#***+******+**=***==*+**#++#++***+%*#
-+*==*=............:=...##=...==*................=...=+#....*=+@%*#%#+***=****##+**#+#*%####+***=+#***%*+#*=*######+*%*.+.-..#.-+*++#**#####++**..=*###*==+*-=+#+##****#=#**+%#+**+-+*++**#++#***##+##+=+*+=+*#+*#+=+++==+*+**..++=++.++#**#####%*++*==+=.==.+=**#:*=##**#**#*=+*=-=#*=#*+=+=++*#**#*+*#*+#*####**=*+=*#++#***=+++#+=-:+=....-+-=:#*=+#*=**#***==****##**%*=+#***#+++*=-+*=+#***#******#*####+**+
-#%**+=.....+.............=...+........................%....%#+#*==#*=+##+++%=#%###%*++#*+***+**+=***#%##%@#*##**###*#*=*+*+=#*#%%##*##+@#+**+***-=*#+*.-.==-*.:...*#.*....-..............-.###=+*#**#%####**%%*###.......+*##=**#**#%#*#%++*==+*+*%%++#*.===**=*-+#..-..*.....=....:+....-:....-.............-.............:.....:.....-.........**+++*=++#*##%+*%*#*%*****==*-=+++*######*##*%%#=+*=-#*++%**+%*
-#%%###*++#==##+++#==#+**#*##%###**+##++**+=#+=####%%#+*#+=*##+*#+=*##+##%*%#+##*+*%*=*#+-+#++#%***#++#**#%#+=#++=#+*#.......-**#%*+##+-++++*+*####+.::......=......:................:......*%#*+##*+####*#*=+*+*##.*.%-:##=##..-.+::+..=#*****=*#=+##*##....-.....+.....:.....=....:=....:...................*#.-:.........:+.=-=#==+-=*=+*+-++*+#**#%#+*####**+*##+=*++*#**#####%#*%%#*%*=*#==*#**#*++%*-*#*###
-*##**=.....+.....*..................*............-+#+**+*=*+###%%****+##+*#%*+##*+##*#%@#+***###+*#*+=*=+*%*##*+*#*+##:++++:**=*#*+#%#**#*+#*+*##**.=..+....*.+..=.=.-+.-.=::#.-.*=-##*=*#**#####%#**##+**#*******##%@#*%%+=#.....-=+=..%**#%#*#**=#*=**.+*=++.+==##-*++##+++#+*+****#*##+#+**#+*+*++=***#***+#*+***+**+++*#==#***::::++..+*#%#+-+#*=###+#*++#*=+#*++***+*****#%##*-#*++***+****#**#%*#%%*+#=+#+
-**##++...............==...-....*+..............:.++#*#####**#++#%**@#+**%***#**%#*##+-###+*#==##+*##*##%*#%**###+##+=#*=+****#+*##++%####***#=+*++*##*##**##=#%####++*%==+*+*#=*=*#:**-++##*=*#++#%*##*+*###%%%#*#*=*#+**%*+**++*#%*###=#*=##+=+##*##=**.-*--:.-..-..-........+....-#....:........:..........-=....*.....=.......=#**#%#%#%#***+%##*-+*++*##*###+#####%*++*=#++=*##+*#***#*##%**%*=+*=+**=*%*++#
-#+##+=...........................................#*##**##%++#*-++=*#%*#%##+##*##*++%*++##+#%**#%#+###%%*+##==+#==####=.:........................:......-..............:......*.-.........=#*+*##+*##*%###+**=##+**#+*%%=*%%*#*...........*+-+%=*#%**%***......................#..:.*#.:.....+.....-.....*....=+.:..=....+#%#%%+%%#%+##**##*#%%%+#*@*%+*#*+##%###=**==*##*+##*##*=+##*%#+=*=+=*=###+*#+=+#*#%#+#%
-*##%*=....**.....:...-**#......=*...........##....*+=+-+#++*%#*###*##**##**#+--**##%%**##+*##*##*=+++=*#**###+*#*#%#+..........-.--.-....-.-....+......:........:=.+.*#.*:.:.=....*...-..*+#*###*##*+##*+**+++**+##%*%##+###*=*-.....:-=####%%****#+@*=*.:..-:.+==%++#+++****#+**#*=+#+=**+##+*=#*=****#%#*++=***+#**+=+@@@++#+#%%#*###+@****###**%+%@##*-=*+=*%*+#++*#**#*%#*%+=+*++#%+=+*==*-=#%**##**%*+**+*+
-**#%%=...*##..............................................+*%%*+##***+-*##*###*###+*##*#%*=**++#*=*#+++#+######*#+**-++*++#*+##++##+*##**#*+*#=***=*#++****#***##++#+=*#**#*+*+*=####*#****#*+#%++**#*#**+**+=**=+%+=##+=#**=######**#*++**+*##=*#=-**+#...-+.....=.....=.....=................#........+.......=....:*#*#%*##%#%#***#*%*+#####*****#%+*%++#*=*%***%#**#+****+*#*+*+=+**#%%#*##+#*++**=+#+=-*+=#
-**#++++##+%#==*+-*#**##*##**+%#*%%#***+=*%+*###*###*#%#%%***#*++*#**#%*+#%**%%+##*+=*==*#+*+#+=##=+###**#++*+=+#**%#=-===.%*+=+*+*--=.............:+==.:........#*...........+....*.:.:..=....*.-.-....#....+...++.*-+#.=#%#*.....:.-..-.+*++%**##**##+-....=...........-.....:.....-.:........:#.-..-.-*....#+.+.....#**#+@+**%%%###%.%%+@*+#+*#%+#+=%%#+*#%+*#*:***++*+=*#=*######+=**=#*++=#++#*=+#++*#+*##+#
-*#+++-=##+*##*%%**##*#%%#*#+-++#-+#+*%#++#*+######+-:#-+##%**#+=*##*#%#+**=:+**+##**##+*#**+#%+**=++***#**=+#+*+#*###...:......*=.-......*.+.........#..........=...:.*.+.+#.+.#+.-.+.:..-....-............-*...#####**#+*##+.=+--*=:++*+*#**#%*#*****+-.:.=**=+#+***-+**+###***+=+-:+*+***+=*#=*#*+*##**#=+*+=#%*++**#*=****=*+%*##%#%%.%*@*%#%#*%++%%##*%****+#=+#+=#%#**#++*#++##*++*=-=*-*#*##%*#*#+###+##++
-*#+##**##++%%*##+==#==*#=##++**+**#***##**#=***+*##++**++%%##%#++#*=*#%+##*=+#+*%%#+%#*++#+**%****=+**+#**####+#####*-*+*.+=.=.#**#**-#*-*#+++#=+#+=+**=*#+*##+***+*#=+#**-++=+#+**##*=*#+#*#+++*==*#+##%#*##*+#**##*+##+=++#**#******######***=-=*=*#**...:=.....+.....=.....-......................................+%++##*%#+%**+*#+#=%..%+#=+**+%*+#*#*%%####%###%**#***##+-++==#*+##+*##++****#*+*+==#+=**+*
-##+*#***+*=*#-+#*+*#++*#++##+###+*#*=+%+=+#+-*%*+*%*###*+*#+=##*+**++#%*%%%**##*##*-+##++#++*#*####***#**+=*#*+#*+-*+++%#**#**+%=+#%**##=+*+=***#%#*#*#=*#+*+#***+++**++**%*#**#+*+*#+##*=-*#***#++#@#**%-=...:.........#++#+..........-.+##*+#*=**++*#=....-...........:.....-....::................#.....:.:..-..:.:#@%##*+#**%+##+#%%#=%.+@+%+#*+@#+*#%+***##%++##*+**+**#++###*%*++*+*##+***-**++*#*+##+=%*+
-++==*#==##+*#*+*#*%#*###*+##+=***+**+**#**%*+*##++*==+##++**=*#*#*###*#+++*++##++#*++##***####*+++==*%*-**=+##*##%****+*#++#**+**=+%++*%*##+#+##=#%+*##+*#+.+*=*##**#++****##***#++*#*+#*#+###**###*#*=**.-.*...=#....:.##*#*....:+*#++#***###@#####=*#+.-+++*#**#*+##*##***#*=*#=++**#*++*+-**#***#+*#+**#***+++#+++++=##@#+#+#%+%++#*%@+%%@.+%#%%%**#*##**%#%#*#@+##*#%#+*#**#**==#=+*--=#+=##*+#%#*#*#%#*+#*-
-#%*+**#*##*###+##+++*=+=#*%#+=+*#*##%#*#*=*+++*#*=#*=+*%+####*##==*#**#+=+#++*###%####*++**++%*-+**+***#%%****=*#%+*#*++*=-*#+*%#**#%+#*%*%#++#*+**=**%*#%#*###*#**####*++#=##=#*#++##+#@#**%#=+++**%####**+###*##+**=:+#++*##**#*###**##*+%+:*#=+*#++*+.+*+=-....*..=...................:.....=.....+..................:..+#*+*%**+#+%%#%#+%-#.=-##%*##*#**+#*%*=+*%*#%%#=+#+:+*=++#**##+*##+%%#*%*+=*=-+#*+##+
-*##**#*++*++#%#***=*#*=#**##*+#*#=##+=***++#=+#%%**#**%#+=*#****==*#+*%#%*%%+*****%*+*+++****+##*%#*****##++*#+-*#+=*#####++%**##*#=+=*#*=*%**%*#*##++%*#**#*##=***+*%#++*+*+%==*+#:+=...*.=:.=.-.:*...*......:.........#-*#%=.......--*#+*+*=+**+=+##+*.-........=................=...-.+.....#....:=.==.==:+...:=.....=+*=+%+@#%%*+*#*%+#*#+++@.*.@*#=#**#**%#@%%*%*@+#**###++#*+######*+#+==#*+*#*=##=+##+#%#
--**=+#*++#+*+%#**%#**#*#%#**#++##+++***%#*#%#****+*#*+*+*=+***###*###+#***##**#*-+#*#%###*##*###*##*+*+++##+#%**#%#**#*+##**......:.............:..#..............................=.............-......:....+.:..*......#%++#.:+#*++++=*#+*%###*#+=++++*-+##+*-*=***###**#+-**=+**++#=**+=+*+**#***#=+#**%%#**#++#***+=-+**+.=*+%*#**##*@%%+%+#**#*...@%@*%#%+%++##**%#*##*+#%####*+=++*+*=**++*#+**#####**#=+++
-=**#*%%####**+*=+#+=***+*+=+##*%%##*%*+##**%#+*#*=+#+*####*##=+#*+*##*=#++#%+*#%*+*#++##**##=+#+=+#**##***%****####**#*-****=+....+....-.-..-......*.-....+..=.=....-.#=.=.+......*....+.=.-=+*.-=+**#=**+**%#%*+#*-+*++*##*##**##%**%#***-+*=**#+*#*=+*........:....-...................=.....+.............*.....-.............*@%##**%####+*=####%...##=**=%#%##**+*%#**#+##=*%#**##*#++##%*##*+#+==*++##****
-##+*+##=-***=##+*#-=**+*%%*%##++##+#**++#=-+###%%*#%##+*%**#*=+++=+##*###=*#**%%#**#*+-*==##*#%#***#+###+*%=+=#-=*#**###*#*#*#*###+=*+==*#*+*#*##*+%#*%#%*#%+=*++*#*****+*#***###%#++**=+*+**+%*+**#+##**+*=*-%++*-*-=#.*#+*#.........:.-#+=+*=+#*##%+**...............:......=.....=....*.....==....:##+.+.*#=.:.*=+:++-==*:#*+*-*+*#*@+#@#+#*##***%*#...@#@++#**#*+%@**+++*#@+#%###%#*##=+++-+#**+#+=**=#*#+##
-***%+**#-+#++###%#%*+****#**+#++##-+%#*#%%*#**+%%*++%*-+*+=#*####%=#%**#%*+##.=*#+%#%%%#%=###*##*=+#==**+*#%**#%**##*+%**#*+.+..+.*.:=.==*.+#.*-#++##=+#*+#%++.....#*##*...-...........=....+......=......=.-..-......=.:***+##.**=-+*=*%#%#%%#+*+**#*-#+=+*-=+*=+*#####*+#****+*#*+*===+*+*#*#*+*+*#*###=#*+=*#++###*+-*:*+*=+#*=...-+%**#**#++++#*%*+#+...+#%#*###%##***#**+*#*+*=++*#++*-**=+***#%####++**+*%
-#=*#*##%%%##=+*+=*#+*##=+#+=+%#**#**##*+%*+*#*==*+**##***#++#***%***#==*#***##+###+#%*+#%++##=**#***#+##++##+**%****.......=.........-...-......##++#*+*#+#%#*.=..-#+.#*.=.=....*........=.-=.+.:..=.:....=.#..+.=.=.-*.+*#+-*%+#%##*##+**++****#*==*#=+..+--..*=....-..:..........:.....+..=..:..=..................=.....+....*.....+.##**+#****%#*#**++#...+*+%%*=%#+*+*#%+*##+#+++*#+####*%+#*+-*+=*#+=*#=+#
-#***++*##+**=+@*=+***##*#*#**%*=###**#=-+***%%#*#*+++#*=**==*+=*##*###*+*%*###**%*-###+****+%***#+*%*#*#*=++=-*%**##+.*..*.#.+:=*.#..*-+=#**#***####%%#****#+=+******=#*++#%*#*##+*+=+**+*#*++##**+%#****=**+++*****=++#*%%*+=-+:.++=##.+**=+##*###*+#+=....=-..........:..........:.....-........*.......-....-*.:..-..+.+*##**%#=+#**#*+#%**##%%++*##***+=%:..+##%#*+#*#+**@#####++*#+=*+-=#*++*+++**#########
-##+#*++#==#%##%@**#**+%#**%*+#+:=*#**#**##***#***#+-+#+=*%**###++%***%##**-+*#++%#*###*##*##%#=**=-+*++##*##*=#*#####*#%*=*+==#*#*#***#+*####+#*+#+=**%=#+=-.*.*=.*:-.:..=.+.........+....:.*.*................=.+.+..=.*=#*+*##++=#+*##*##++**+*##+#%+-++.=**+#***%#**%##*%###**+*+-=#=+#**+*#+##*+=#%+#=++++=*#**+#++#****=*-:#:.=.:=.....%+@%*#%#+%#%%*##*+#=.#.**%*##**#**%#%*+**@#=++*--+*+###+#%#=##=*#*+#
-#*##%%*##+#%####++#*--*#**##*%%#*##*#%%**##-**++*##*****+##***#++#=-=##+#%#=#*#**%**#*+*+*==##**#*+=+#+**####+#**+=+#+###**#=+#**###**##+****#++.=.=....*....*.-....:....=.=..=.=.:-.*.-....*.+..................+.=..:.+-+#***%#*#***#**###+*#=:*++=%####%*##+##*###*+##+++==#*.....................................*..+.....................+*+%*%+##+*@+*@%+##%...*####*#++%+##*##%#**#%#*+#++*#+*#*++*--**+#
-#*=#****%***+=+++**#+*##+***+#%#*=#*==**+##+#*#++*###%#*==+==##**#%**#*=#%*+#%%**+==*%*+##+=##*###*###+**+=*%#+##*=#+=#%###%#*##*-+*+*##*+***##*.#-#=:*.+....-.+#=+.*:-+-#-#=-=+#-#***:**++#**#*####%#-+#=**#+**#++*++#%#+*+*++#***#+-**++#**###=##*+*#*+%*+*#*+**=*#*******#++#....................................:*--*.--....*=:*..-:=::=##==#**#=+*+#*%@%%++#+##.-.+%###**#******#*%##*#*+*+=+++**#####+*%*+
-****#++*#%*%#**##*+#**##+=#*=:**++%#-*##+*%***%*=**+-+**+#****%+++%###**++*++*******#%*%*#####+=***=%#++*#**##*=#%##%*+**=*##+#+++*#*+#*###*#*%#++#**#+**#+**#*#%#=###**=****#+=%.*=+*-#+#==#:+-+-.+.*.:-.=.+..:.*....=.=***+=+*--*##*#%**%#**#**##**+#+:*++**#*#%##%#*##+#%#*+#+.-#===*+*#*=***+#####+=+**=***+**+=**++##*#*#+-++.==##.*+=+-.:...##*%****%**+**%%**+@.-..*+#%*+*#*%%*%*##**#*#*#*##+##**#**##*+
-##%##*#%%*#%%#*+%+-+=:+%#*%#***%**%%##%#+:+*-=*#*%%*#*%#**%%++%+==#==*##*#*++*####%#****-**=+#%+***=*#**#%*+##+=*#=*.....-.:....+............................=......-................-......=...........................*=+#+*##%*#%##*#%#*+-=*+:=#***%*....=-.=-.*.....+.....-..........+:::................:....*..-..=...**#-+....=+.+.:*..:...++***-%%*###*#@*#*#%#%..=.@+#%*##**@%+@*#*#%%**#**++*=--*+**#*
-#%#*#%*=*#*+#+*#**-%%=+#%#*##=#%+-*#++#+*+*#++*##**%#*#*+-*#+*##++##++##*###+##*=+%*+*#+=*#+*%%*#%%**#=+#%*+#**+*++*+....=...........:................+................+...:=...-....=......*.-.-+:+.*-:.:+.=..-.*:+#*++##**#..:::...::.+=*#*=**+**###*+.:........*.....*.....+....-.....-.:*..:.......=..+++*....#..*.:-:*-**#=*###-#*+**#+==*-=#*+#%#*#+##*#**#*##@+*+*%..+.*#**#@=+*%=*+#**#+%*+*++#*+##****#
-=##**###*%***%+*#***#***#*+**+*#*=+#*+*##*#%*+##*=+**+*#*=+#*=*%@*%#*=##++*#+***+=**+##%+%#+++*++*#+*#*=****####***=#*=++*+*#-+=*+-*##+##*##*=*#++###***+***+#%*#*#+*#**%###*#++=*#*##***##+###*###*#*#+=#++#**==%**###*##+*+*=+##**%**##**#%#*##++#*-**=++*++*=+*#*+##+##+***+**#+*#=**+==#*##%##%#*+*#**%%*##+*##*+##+=+**=*+===+*....:....:=...*+-**++*##+#+*+##@+*%=*%*#..*.#*+%#*+%*##+*#%*=@*#+*##**#****-
-++#++##**##+*#***%%##*+++*-+#++*****%**#%+##%+=*+-=+#+###*#*#**#%###*++#+=*#*+***+#%*####*#*++#=+*%****#**%#*%%#*##++*-+:%*.--*.++:=.*-==-*...:#.+.#.......=.*..=.-.-.......................=.............-...........:.#%#++*+**###%#**#**%#*+##*++++=*.:*=+-.+=:=.....+............................................+.............:....:.....:...**:+*+*##**#+###*%#%+++*+%*%..#..*=+#+#++***##++%*@#+@#+*+--++
-%+%#*###%*##*+**=##=*######*#*+##%++#*+=#==##**##*+*#*#+%*+#===+#**##*##*+#%*#*%#**#+=##*+#%*=*#+#%##%@%##%*++#+*##+.....=....+....=....:.........=++.#%+-...=..:....................=.=:.................:....=........###%%.*++#*####*#*=-**=+#*###*+*.*===-.*-.*.....=..........-..-..+.............=..*.:**##.#*.#.:-:**-==++=+#**##*=#*++*#**#*=-**=*%#*#%*%##+**=#***%+***..+..*+%#*+*%*+*###**#+#*-*%#*##
-*###*=*==*##**#=+#*+**##%#****++***+*%+=*+=****#***+#*=+**+=#+=+*+*#*##%#*#**+*#*=*%*==+*=*#%**#%#*+=*##*+=*+=#+=*##.-.#.+..-.=+*#.=.+=+*++=##=%=*++*+**#+*#*+#+-+*#+###=****+#*#*#=+*+-++#*=##++*##++*+=**+-=#**##*=*#**##*#**=*#=-*#+*###+#*++*#*#*##*#+=#+=##+***-:*+-=#**###*#*+**+#**+*#*==*=+#**###*###+#%#***=--*+.+*****#*-=.:..*.....-...###%##**+**+*#*#*++*#*##*#+#+%*=..#..@*+#+##*+*%=#*%*%@###***#
-+=*#*+*#+*#**##+###****=+#*+*%*+**+**#**%##+#*+*##+*+*++*#+*#%####*+**+*%*+**+=***#%##+##*+*++*#*++**=+*#+%%####+*#+-*##++*+=***+##**%#+***+**=+:#=.=.=..-.*.=-:-.=.:..+.-.............-.........=.*........*+#**##*#+*.:**==*#-+*+-+#**#%**%%#+#*-=#*+=:+........*....**..:..+..................=.....=...............=*.-..=..*.......*..=++++*-=#*+##*-=#=#*#*#*#%*#**##**#=#+%+#..@..#%%*%%#*+*+#+#%##%#%-+#
-+**%*##%###*=*#*==#**%@*=***#%###%*=+*+=+*++*#+=**+*####*%*=#*=+#**#%%*+%###%%*#%#-##+***++*#++##*####*#***#+*+%++*#==%%+*@#*##*+*#**##**.=...........:....*.:.........=......:....:.-.#=.+.=.=+.*+-....=.=.+*%#=+*...#.+*#**+#..-#--=#:=*==+**+*#=+##+***#.=:....=.....*..-..*....-..=.....:....=.....=..=.+*.*-.+.-+-#*.#=*+=+*#+#%*+*#++##+***+-+*+*##+**#*##****#%*#%%**%%**###+*##..@.%#%+##++*##%#%#*#+*#*
-%***+-*#**#*+++#=*%###%%#*#**#+*##%++##==#***###*#+**#**+#*=**-+####*###%#+#%#**%#+=**=+##*%#*+*#+*#%**%#+-*+-****%%#+%**%###*%#=**=-##+*.*..#.+..-.-.=..+.++...*.=.***#:*#%#.#+*=:*=-+*#+##*+***#+#%**%+++*++*%#**#++##**#*+=**:.*+=*%**#**+#*+#%#*#****+-***++*+=++-+*++#*##%#*#######=**--#++**+*##**###*%###++=.*+..-*#*:-..+===.=............###***@#*#**=*+-=*#+##*+%+%+%*%##++%=*@.-%.##+*#@%###=%+*%+%#*
-%#+#*=+##*#%###@***#++##+##*=+*=+##+#%%#*##+*##+#%*+=**+*=####%*#*#*%%#*##*=*#+*%##%%#**#**#*****=-+#++%##*##*###*##%*+%*++*==##*#%#**#****+***++*==+*#*#*****=#**#%%**#*++%+*+**-+*-=+##-#=+.++.+...:-.+...:..-....-.=.+*##*+++--=-==-####*=##++##*+**...........=..=................-.....=........................:....+.............-.........#*##+*++*#*****+=##+*%#+#+*#*#+**=#*#*##@..*..**%**%#%%%*###%#
-##*#%#*%%#***=*%*+*#*++++#%#**%#****+*#*+**+=##+*%##*##**#***##*=**+*%#+#@**#%#**%*+**#+%#*+*%*##%*###+*%#*##**#*+=+......-...-:.:.*=.+.:...........=....*.:.........=......-.:....#.*................:.............=.+.*+*#+.....:....--=%++#%+==*=+%#==%........:...................*....:+.=.....:....:-.==-=..=.=#..-+===#--*#*+=*=+#%*#***+##=+##+*#*****#%##%###+#*=+#=#*+**###%*@#@#*%..@.+%#*#**##%**#**
-++=+****#*#*#*+%#+%%%*#%*+##*+*#***#==**+*####%####*+#**=**==**########**####@#*+##-+##*#%%*%#*##%#*##==**-=#+*#**+*.*.#..+.*....-.=..*.-....=....-...........=........*+...%.+....**+..=.*.:..*.*.+..:.*...=*-*-*+-**%+%#+#*:=#=.##+*#*=*%***%##*%*+**=+%***#+*+*-+*#++#+***++*++##*###++*===*++*#*++%*#*#**##***+-++**###*+*-=*=#+.+:-*++=.+....#*#*+*%%###*==*#=##***##+*+*#*+**+*#*#*%=##*%..#..#+@#**###*#=
-##=+=*++#####%*##*+*#**#*=##*-**++#%#%#%*=#**###++=*==*#*##%#*##*#%%#+**=*#++#*##%%#*###+%%**++-=*=*##*+%#*+*#*+#%+##*-**+-****#******+%*##%=+**+=+++#**+#*=++*+*+#+#**=#*==#*****-+#*+*#***##+++#*##==**+=+##**%%+##*++%#+#*+-**.-%**+%#+**++*####*=-*=.+=.==....=....*#.+*=......:..*..-....-.....*.............=....++.*.:+.......*..-.+=....-.*=+*+-=****#*#+#+*%***%**=*+++=%+#=%*##**##*#%#..#..%=#%*#%***
-###*#%#*#%#*#%**%+:**+++**%%%+*%#*#%##*#++*#=+#%**##+*#**##*+*#*-=#*+*#%*+##+#%#*#%*+%#+#+*#+#*+*%*++%#**##**#*#**++#*+***-*##=#%###**=#*=+##*#*+=*=+*####@*#%#++#*#***-#...+...%%++...+#.............-*%#...:....=**:=.**+*%##***..=-.*#**#=-=+*=#**#***=#.*#.=..*..=..*..=+......+..+.+*..:.+=.+..+:.*..*.:-.+:+@.++.+==#=+**+-*#=+**####*=+#**#*=+#++-#++*%**#%%++#+=*+*=#*+=*+#%###%*#*#+#+###*..=..@+##*#*+
-=#*++##=*****#***#+**+=##*##%**##=+#*+###+*#**#%*+%##**#*+**+*#*+++**##%**%#*#**++*++##*+*#*++########*+*#*+=#*=*#**##*#%#**%*=*++*#*++#*=+#*#*#####+**++*%++#*=+**+*##*#.......##.:...=*..............*++........#:#.*.*#++#*++#***#=-+#*###*+*#+*#++###*%#+*#=+******=+#=+*#+##*###*=++==*+=*#*+***+**##%#####=***++=#-=#-:+:%*+*+=#*++.:..*....#*+%%**#*+#**+*#++***=***%%*####+*%#%#@=*=*%#*#*%=*..-+.@#%*=#
-=*#=*##=###**#**###*%%+*++++#+**%+*##**##*#%**##*-+##+###*+##*#%#*%#*+***+#*+###+*#+**%%+##*=**==+%*+**==+**#%#**#*=+#+=*++#%#+*##+###*%##*#*-=#****#++#-+****###%%**%#=+.:.+...=#+--+#*#:*..:.-.*.:=:+=+*...*:*-#+=**+**#+-+++=+**##**#%**#%#*%#+*#=-**.+#.+=....#.....%..........-.............+.....-..................=..................-....*+-+#+=*#+=#*-*#**###*+#*=***+##*+###*#*+#+*#*%#+**#*-..#.*##*
-#*%#+%#*%#%#*++-+#==##*##**###**##*%**==*+=*#+=##*+#%##%%#***+-#++*#+###*+#*##%%##*#=-*#=+%%++#+++#**#%##*#==*+++#%+***#+#=*#%##%#+*#+=+%++##+=*#=*+##*###@*+*%*####*#*+=+#=**#####**###+##*=++:*+#*####**##+#%*+#+:=#+++*+#%*=.=#+-+**+#*=+#=........................................................=...............................=#+-#*:##=++#*=**+=+*#+#%++##+*#%**#+=-%+=*######*#=%#+#%***#***#***..@.@#
-**##*=+=-+**#%%**%*+*#*+###*##+=+*+=**++#+=##**#%#*%%*=+#*+#%=+**+=#%:*#%###**#**+##*+##++#%*#%@+*#+++******=**=*####@%#*@#+##*+*#+*+*=+**+*%##%%**##**##*#%*==+=+**####*+*###%*+#*+=***=*%#**#**##++*##**#++=**#%**###+*#%**+*-=#=-**=*****%*........................................................................................+**....-=...+*####**#*+*%#+*#+=*%=*%%####**##*#@%+%%*##**##+%#@*%*#*+@..@.
-==#%**#**#%#+%#**%#*+**++#+++**=*#+*#*##%##*#*=+#****++=*#*#%%#*****#*****+#*=*##=#*#%*%##+#***#***#+=****%%#*%%#**++##*+##*=**=*###*%**##*###=*#**##==*#+*%#*%**+##+*###*##+##***#*+#***##**#*++*#++*%#*%#*+*#**%%*####+##=+**=***+=*++#%#*##.........................................................................................:.....*.:..+#**##*+**++##**##**##**#*++#**#+-*##=*#*+#+#*%***#**#%*#+*@..
-%*#####%##%*==#+=+*=###**%**+#*##%#+**+-#+++#*++*%*#*%##*#*+#+=***+%#***####%%##%*+*#=###**#*=#%*+*#*#*#**+*++*#**#**+*++#*#*###*****+*+%#***+++#**##*##%*#%%*%%%+#%+-##-*##+#%#+=#=##%#=+++=*+*+*#%++%%**%%**#*==#+-+#=###**=**+*##*-*+**=-+#........................................=-=..=...-==++++*#+=*=+:........................-#*:+##*#*#.-=+=+*#**#**#*+##%##%++*=*-+#***%##%%**#**%%#+*####=+###%%##=%
-%+#**-*#*+%#+#*%*+##+*#*###*+#*-*##*##*=##++#%**@%#*##+*%#*+*==+###*%%###*=**#+##**#%*=*#*#%%#*%#=+*#*#%+=+#--+**#%%*#*++*%#*###*#*=+#*+#%%#%%*%#%##%#**#*=#+-+#***#*+##+*####%%**#*==*%#*%%*+##**%%**#%=-+*++%%#*%#+##%+#%##+**-*+:=###+#*=#%........................................::......::==+*+++#*+--..........................+*#.+:+=+*-.*#%#*%*+*%%**#+++*==#*+%##++#**+#%**#=+*#+-##**+#**+#**=#%=++*
-***%#==%*=####%%%*%#=*#++%%+***=-*#+*#%*#%#=**+*##*=+*=+**###%%*##*####*#**+**=*%%#%%%##**+#%*+#%==#+=*#%#%#%*##**###+##=+*+-=*#*##*###+*##*#%%*#%=**#+###**%****+*##%%%*++#++*******=+%#*####***+*#*+#%***#*+######****=++#++%#+**++*#+#%%***................................................--=-.+==**+:.............................*%.-....+..**%++##=+*#*+****##=*%*###****=-+*++@**##++##+#####*%+%++#*%#*
-**#@%##%%++%*=*#*+#*+#*#+*###%%%*##*+##+*#%+*#==**#####*+#*++%#*+#+=**#*%###%##+=#**%%*##*++**+*%#####*##+*##*****=#**###**#++%#**%%###****:*##*#%**%#*+*##%%#####*%#++**++%#++#*+%%%#%##+=##++#*++*#+*#%*#%%*=*++#**+*#+=##=*#%.:#****+++*++#................................................-+..:+-:................................***=+.:+++=.**#*+**=+*#***#*###***+=+%#++**+#****%###%*+#+-#*++#+#=##**+*#
-*#=##=**#**##+#%**#%#*#%**#**###*+#**#%#+*###%%#*##+**#*+%#=+*#+*#**##**+*###%#**#*=*%%*%#**#%**#***##+**+=#*++###*%#**##%####*%+####*##**@*+#%*%#%###%*##*+*###%##*#*+#%*%##%#**=***+##%=*#*#+%%%#*##=**+-##**#***##*#@%####++#=+*+++##=*%**#.................................................=:.....................................+-**--#*+*+=++####%##*#*=+**=*%**##++##*####*#+=*#+=#*++#=+*%**##+****#+#+
-#%++##=#%*#%#**##+*#**####*#-+#*+*%##%%#*##**###++*+-#+**+####**#%***##+**+=+###*#%#*##*#%#*#+++*+-=#**#*#******%####*+##=-*+*+%#*%*****#%#%#+%#+*#*+#*#+##*##*#####%#*##***##**#+=**++%######=+**+#%##*****+%*%%#+%*#+#+**%#++*+++#*######*=+.........................................................................................+.....*#=..+*#**-##+++*-*##=+%###%#****-***=###*#*=*#++%#*###++**+#*+**#+
-#####%**%#*##*###+==*=**#*#%#*%%*+###*#%=#++=+****##+##*+*%#*#%+:-#++##*+#%#*####%##*#*****+*%##+%*=***+#@**%#+++*=***#*#+=#**###%###*+**+##**#*+=%#+#*########*#%*+#***#*=+**+###*+#*#*#%*+##+==*+*####%##+###*%*+**+-*#=+*####%##%+**##*#*==........................................................................................**=:+.=+#+:+#*#%*=***+*#*%@####*+*##+#%+*+*+*##*#*%*###+*#**#****=-**+%=%+
-**++##*+##*=%#++###*%*+*#+*#**##***%++#%**#%*+##**##*+*#=*+#**#%**#***%*##%*+*++-****#%*+#**+**#*##*=**=+**=***=*#*+%#**##+##*=****#*+%%+**##*#%%**###**+#*++##=.#+*+###%*#=#%**##+*#+*+#**+##+*#%#*##*++*+**#==#%**#%##%#+*%++*##**#==##+##%#........................................................................................*++*%*+=#++#%*##%%#%#++##=*#+*+**++*****##%**+%+*++****=+#*=*%**%##*%#*#*+
-+#**+**+*%#*#%*+#%+#%%**#++**+*##**%#+###*%@#+*#+++*++#*#*###*##+*%##***==*#+*##**##*#@%####+=#==*#**%%**%#*+#**#%%**%+=+*=+#%+#*#*#%#*%###*#++*#=*##+##*+#**##%##%#*##=*#*+#####+*=*%***#**+#*+*%##=+****#####*####**+**%#-++++****%*#%*****+...........................................................................................-+....#..=*-***+##+*##+###**%%#%%*=*+=+#%++**=*****%##%**#**+**=**#*#%*
-##%#**%*#%%*#%*:*+==*#*#%%*###+#%%#%**-**=-#%#*######*#%%%#**=#**=*#*+*##+%%###%#*##++%*=+*#+*##+*#**####*#=+**++#*#%*+-*%**#*#%**#+#*+**##%#*+**=+###*%*#*****++%#*#*#**#*=*#%**%%**#**%#@++##=+*#*#%#%*##***%#*#*++#*=+#*##%#*#***#%#*#*==*=.........................................................................................#+=+.=.:###*#-+*#**#+*###+*#*+*%%*%*+.++++#########+*#%###*+++--*-=#%*##%
-**#*+**+-*%+*%%**##*+%*##%*#%#-+**=*%#***#+*%#*%*###*+=*%********+*#++#%####+=+#*=***=+##=*###*%#+##+=##*+#*-+#+=**###%##%+++#***#++***+##+#*%##%**##-*##**#+#*+===*+*%***##*#+#+=*++-:.+==+-#+*=:+++.::.....=....=...=.####+##=+#+-*##**#%*#*........................................................................................##*=+#+=*##*#@####*+#**=*#==*=-+#+*%%*#%%#*####%#+*#=-#*+=######+##**#*+##
-+**##*%*#+%+*#%**#%#+**==**+###*#%*+##*%%@*#*#==#++*##++*#*+##*###*+#*+*#+*#%+*###*%%#@@%++#*=**#+###-*#*####=#+++#...=....+...........+.=..:.............:.=....:....=.:...............:..-.:.+....=........-....:.+...****+*#+*%#*+*#+#**##*...........................................................+-:*:=+***+====....................+......#*++#**=*+=##+#%%+*#%+##+=##*++#*=*#**%#+*%#+#***#***#****=+#
-#*%%*####*##==#==+#++##*##%+#%##%%#++#+=#*++##*##%**#%###**:#+++##**##+*%*#%%%**#*-+##+#%#+#***##*%#%###+*#*+=*%*+*.*.++.#.#+...:.....:+......:....=......:.:.........-...--.-.*.--...=.+......#*-*:#:#-.--*.#---+#.*=***##*=..*%#%***#*=+*=**......................................................:=*#**#+*+=*+###+***++**+.............:........+#*++#*#%#**#*+#%*+%#+=#+*++***##++#*+#%##%*+**=:*#++##**%#*%
-%#+*+-+#++###**##+*#*#%#**%*+*#=+**+*%#*###*#%%##%***#*+*##-#*+=*####*##**++#*+*##+*###*%#*%@*+=*+=+#++*#+++#+=#*##%*##*+###+*##+*#::+***%###%#**+++#*%###+**...:.::++###*#%%**##++#+++##*=%#*##*##%#**#*-**#+*%###%#+####*#-...-+#++###+##%**..................................................:=+*=**#**+****+**##+*=*++#*++-:......++==-=**#+%%###*+*##*%@*=##-=#+-#######*%#*###**%*=+*#-*#*##%##%#*%#+#%#++
-%##*%#=*#**#@#**##+##+**+**#=+#+=+%###%#*##*+*#####+++#+*%####%*+##+#**+###-=#++#####%***#*=***=+*-+##=**#*%%#*+#+%**+.-++:*--*.%...........:.-.......................................=.=:.:...............-........:..:==##**##*+*#**%#####*=...............................................:..:+++*#+++*##***#***==#+*=*##*#**:.....#+##*****+##=+%+==*++*#%#%%#+##*+%#=++#+*++:=##**#*+##*##**##+**++*+++*##*
-##+*%+**#*=#***%#+*#*+#*#*####%##*#*=+**+*##=#%#*#%%##%*+*#*+#%*-+#*=##**%###*%++**++##*++=+*###*###%#=*#*+*%*=**==......*....:.-..............................................=....:.:......-....::*.:...........=.#..:#*=##*%%##*##=##==#%*+.........................:..............:=*+....:=++*#**#*+**+++++*#*******#*#+*++-.....*=*#++***-.-.*#*#*%#+*%#**#***##+*#+++#*+*#+=**+*#*+*#+=**=*%*+***-#+++##*
-*#==*#**%%+#####%##%%#%**+*#+=#%####=+####%####*+*##*#%*=#%#+*%%#*#%+*#**+#*-*%=*+##+#%+%#**##+++*#+#%*+**++##*##*+-++-*++.*.:+.*=..+*.-...........+...................-=:+*#*==**+=*#**#%++#***#%#+*#+-*#+*#*+*#+*#%###%#*##.:++++##*#%#*#**%....................:.:.::............=+**=-...:+**=*###=++*=+*=+****-#++##*#+#*+.......#==+*++*#####++%**%%#*+%#-*#=+##+#%***%%*#%**+*+-=*==#*+*#*+##+*%*##%*+*#-
-*%*=*%#*#%%*%#****-#***##+###=#%%**##**@**%###*++=++=+#####***##+*###*#*:+*#+#%#**##+###+%%#=+*=-*%**#%%+%%**#+##***#*=+##+*##*%#*###+#**+..........................................-.---..:........=.:..=..#=....+.:...*#*##*+*%*+*%##%#+***#......................:...........=-=-=+++-:..--*++*+#*=:=++++*#++*##**##**+***=.:......##**%*+#%#**#*++---***+##+#%*###%####=+*==*#**##**#**##**%##+***#***##++%=
-*##%#*#+*#*+*%++**=+#+*#%##%%#*%#*###***#-=#**#%%+#%**###+##*=+*+=*%###%#%*##*+#**#++=*+-=###%#****+*%#***#**=*=+#....................................................................................=.....*=....-.....***##%**%##*%#*#%**+#+.................................-==+++#*--...--**+*#+++==+=++*=****+**#+***+**++*......###*#*=+**+###++#*=*##*###+##+=+#+%##****+*#*#%%####=+*+++%**#*+=*=-****%#
-=+#*+##=-+*+=%%%#%**#%*=+**###+%#*+++#*#%**##**#**+%#+*+#++#%*%##**%**#%%+***=#*#*+%**#***#%**##**%*=*#*=#**+#%**#%-:................:.-.:+.*..............................................=.-....+...#+...***+++.+=%*#**##*+*+=*#++*#+*%#%#%%..................:...+.:.......--++**#+*+:..:.+-**=*+++*+#*#+#******#*+**++*=*#+*:.....*#***#+=*#**##%#%%#***=*#+****+#*++#%#%%%****+*#*+##*+##++%*+#%%*%**#*++##
-+=%***#*+##*=#%##%%*#**+*#**##*=##+#%#*#%%*#++=**+*###=+**+#%#*#%**-*++#*++##=+###+%####**#%*++%+###=#+#=+*#*#*#+**+**#**#****++***=##++##*#***:.......................................:--=*=#**++#**=**-+*#-=+-=:%+#:-=**#+=#*+**#*#%#*%@%#%%..................:...=:..:....--=+=++++=+-...:*+*++=++*####=#+**=+*+*+#*#+**#+***......+#**####++**+#**##***+--##+***#*+#+#%%*##****++*+=+%*+##++%#*#@#####*#+++#
-#+#####%**##=*#++*#+*#*++##*%%#*%@%*##+*##**%++*+*+*%%##%#+*%#*#%#+**#=**#**%#*#*##%%+*#*+*%+=-+#*+%#**%**%%%*##**...............................................................................*#.-......:............#*%*=#%=*%#+*#*****+#*......................:...:...--*++++#*++:..--=+++**+*#++#*#*+#*+*-#****#*+***+##*......**##+#%*+##-=*-:**#*##***+*#@%*###+++*-*#**#%#+##**##*%##+#+--**=*%#=*%**+
-#**%*=+*%+*#**##=+###%%##%=#*%#+#%*+*#+=*+#+#%##%%*##*#+*##=**-+**##+##%%#+#%#*#%+*##+=#%#*%@+####*##*###=**==##*+.....-............................................................:.**=**#**#%**%+#-*....=...........-+#%#*##++-%+*##+**+-=*......................-:....:++**#**+*==*-.++:=-=****++*##*****##*#*#=***+**#*++++......*##++***+*%%*##*#@##+#%**#+=+*=*###*##*+##*##%**#*-#*+++***#+:*#*+***%%#*#
-#*+*#++########%**#*+*#*+##*.##+**%####*+%*=*%++*#*+**#=*#%%@%#+##*=##++#**=*+++##*###*#*=*###**#+=*%+#%%#**#**#***:.-.-....:.+.--.=:+=+=.-........................................=-+*#####%*#%+=+##+##***#**+##%%%####**#%*+##*+#**##%%%###%......................:=...:*+*=*****+*#+.=:=..=*+*+###***#=++++****+*++#+**#++#**......*****=****#%##%*#+#++##***%**#++##*##@#++*++##++#*=*#+***###%#*##=%*-*****
-%*#%%##%@==#*=###%#%*+*++*##*%%**##+*##+*%#*=*#++##+###**%*+%@##*#+=+##+##***#*###*+##+*##+=#*+*##*#%#+%@*##%#%*#+=**=-*=:=++:*=-=*#+=.=...................................................-..........:....-...**=+:..#%#*#%#*#%#%#%**%+==##**.......................:..-+++#*#++*#+**+.=++.:=++********+***#**=*+****+**#**++*+......#*%%%#%#++++++##*##**%*#*%%#%#**-+*-+****##+%#*##%*%%#=*#*+*#++##**#*+**+*
-%*+****##+*+#++**+%%#*%%**#*##%##*%*-=*=*#%%*#%#**#*#%##*=#+==#**###%@#+*####%#**#+=*****##*##++%%%**#+=*#+***+%##.........................................................................................-......+=#*#%%#*#**+%+###**##==##=#........................:::*+***#*=#*+#-*.=+----==#*++#*#***=*#++#%#*=#******+**+=......=....++*####*+*%##%%*#@#=+++=+%*+*#*=#*###%##%*+*#==##**##=-#*+#####%##%**
-+**+##+*#%##%%*#####%###*=*+++****#**+%%*###+#%#=+++-+####**#*#**####*%++*+++@##%#*###**#%#*#%+=##++#%+#@%++#***#%..........................:.......................................=..=-*-#+--:-.=-#.++.-+**#+*%#*###+#%#*##=***=-.=:######+*.......................:-=+#++#***+**+**:-=+=+--.+**#+*+*#***+#++*#**+***+++++**+*......+....**%##*+##=#-=+*##@#++****#**%%#*##***%#%#+***=-*#*#%%%#%#**%++##+*#*=
-##*#%%*+%#++%#*##*=#:***#*#@#+##++#%*#*%*+#*+*#***%*+*##+#####%#=****#%%**#*###+##+++**+*##*#*#*#%#+*%#*####%%+=#*+=**+**+*#*+*##*###*#*:=......................................+.*+**-#**+#*#=.*+=.***-%#*+#*++#*+-=:=##*+%%##%%#+..=*##+*+*+........................-=**=+**++**+***::=+-+-+=++*+==**#*=++++#***+*****++*+*+*=......*%###**#*=#*+#*#*+*-*##%%###+#%*+###+*##=*#**#**#@%**##=*#=+*+**++=#*=*##.
-*##=*%##**-=*#***##%#**@####*#**#==*+-+#**#%#+###+###*#*==#**+######*#+#%###*#*+=**+=###*#%###%#*@%**#+-+**+*#*=*#.*...+#==........-................................................=....................#++#*+=*#=*..*+##+*#+**%#=#+-=***+%*#........................-=+-++=+#*++***--==+*==-+=+=++##***+##+*+++**+#*+++*+#*+**........=-......=#*%#@%##%*+#%*+##++##+**###*###%###+*=+#+#*##=#==*#*=##**##+#*.
-=*#==##**@**%%#*###%%%*+%*+***+###+##*#%##%##****+=##**@%+*%%+##%*#*+=***=%%+*##+*#*+#*#**#*==+++##***@*+#***%#%#%...=.=-.+.#.......................................................=...........*#*++++-+#*+*%%##%#*#%:+%%==*#-*##+##=+*##+%##.........................=++=+*++**#+++==-:*#+=+=*-+#+******#+*=#+*#==**++**++=#*#........:..-....*##++*#**%#*=*%*+*#*#%####*+#%**#*#++#-+#++*%#%%#*+#**%%#*##++.+
-######%#*%#*##+=*++*##*#@#*#%*+%##*#%#+##++*+**+#++%#**%%*#*#+***+*##**##+***##%*#*++*##*#%#+##+*+%###%###%**#%####+**+++*==%**+#*=::.............................................+=*#**#*#=+*+-+###*####*##*#***#+:**+=#@*#%#%*%**###*:##*+##.........................-:=-*--*=*+**+.=++++=+++*++++*+*+#+++++#**+***++*+###**=+......###**#**##*+#+==#*+#*##%@%*%##*%#*+**=-*+=#%##%%###%**%#*+#*=+*+*=**##*#=#
-*%#***%*+*#**%#+*###+#**%###*++#**=*##*=#++**##%@%*##+#*##++#***#*+*#**%%#*++=*#**#****#***##*#%#*#%*###+***=*#++#%*+#**##*-#*+--=.....-*==+*#***=..................................++**+##*#**#****#%#%+%%++*%**%%#*%*#*##+##%*%**+****#%++%#...........................-.:--===+*+-.=++*+*+=*#+**+++=***=*+*#*+*#*+*#+#+=+*##+......=**-.=..-:###%%#%##+#**+##+*++++#*=%@#*#***##**%#+%#+=*+=*%#+###*#*+#%#=#@
-**##*#%*+***##@*%%%#*%***#*+##*+##++####%##=%#=+#***####%#**###%%##++*+##**#*-*%#+#@@####**#*=*###*#+=*%*#%#####**.:.-..-.+............+*#**%*+*#*=-.....................:+-........-*####**#%#**+++=+##*%#*####*##%*##+=*#=*##+*%###%%*%*%%@%..............................:--++=++*.-+==#*=+*+*++****+**+++*+*+*#**#*+*=#*****........=.....++***@###%#*+#=+*#*###+*%##*%#**##=**+-+#**%**##**%#*#%#*#%*-##.+#
-#=*%%#*@%##*=+#*-*#*###+=##*#%##%@#*##==*#*+%#=++#=##%####=**#%**#**##=**%+#@##%#*+#*#*#%#**+-+##*#%###%#*##*##+**.+....=.-............**%++=*-+#++**....................=+=+*#.....:+#%**#*.+#***%*+*##**#%%=***+++=+#*##@+=**###@##%#*=*+=*#...............................:-+***++.==#-++*+**+=#+=+=*#*+*=*+**+#*#+##*#*=**=%......*#**####**#*:*+++###*@#*%%*####**#*+*+-+##*##+##*##%%##%#*##+=**=*****-+=#
-##**+=*%***#*+##-+#+*#@####*+@%**##*##*==%+*#%####*+##*#%%*+*#=+#%*##%**%.=*%%**#**=#+=*%%##%*#%#*****#*#=+*--*#**##**##+#*###%*+*+++*+**@#**#++*#+***+=...........==.-#-=*#+#%#**-...-*++##=+***###%*##+#*#**#%*+*#=*####%#*#@#+#%#*#@*+%#+=#................................-=**+*=.:=++****=#+#*=+##*==+#+***+**++*##*+#*+*+*......=.*-.=.:.=%%*###+#%+#%##*#***+=+##%+#%**##*###*##***#++*%*+#*=*#++####*###
-#*+*#+++**#%#%%%*###=+#++***+##+*#%##%%#+%#+*@###*#=+%*+#%%#%#*#*#++#%=.....*#=*#####*+##*+#%%++#*==**+####+#+*#*+.=....-..............=+%***%#**++-..............=#=**%#+*#++*#*+**+==***#@%###*+=##**#*++#*+##%#%##+#+*=#%*+#*+=*#+%#%%%@%##................................=+*=*#+.-++=+*+*+=*******+*+*****%***+*++++******+........=.......**####*#**+*#**+%*+*#+*@#*#%#+%%+=+#*##*++*+*+#**%%##%#++#+.##*+
-#*#%%%*%#*#**=*#=**#**#*++##*%%#*+#*=*%####++*****%**#%*+*%=+*%**##=..........:=+***#%#=#*++##+*###*#*##%*+##%*##=......=...............++.:.=+=.#*+-...........:+.=*-=#%*=#***%%###%#*#*.:#*=##*=+*#**%%####==++-+#.+***+*%#*%%%#%**+#+=+#***...............................-++**=#*:.===*+*##*#+#*++**+**+*#+*=+*+#+#*=+++*+++......+.#####+**#*++%+*##*+*%%#%%%#@%***+=-*+*%#%*#%###%%#%#*#%--*++**#+*#*+#%+*
-@#-*##+##*+##==##**%#*%%#=##+*+%*#**+=%*+*#*##*#+*#*#*##+#**=*##*#...............**-#%+*####%+**##%##%++%*=*##*#%#*#*++*#-##==.*..-=.:*****--***-%#*+##+.........#-+##+#+########++*++*##*=#**+%##*%**-+%=#*#++..+=*.*#*%*#%*++**=#%#*%+.=##**...............................:+=++#+*...::==+*=*#++**=*#++++=++=+*-=+*=+++=+=-=+......+=*+*+**=-*%**+#*##+#+*+++*#+###*##**##+#%%#*%*++*--+#*+**-++*-+####%###*#
-+#++#*++###*%@*##*#*#**##+#*=**#+###**%#+#%**#%#=*##===+#*##**#....................=+##**##***#=+=++*%#%%#**##*#%####***#+*+*+.=.:..-.+.*=.-:+#..+*.......:..:-+###*%#****+*#+##*+++++*#%%%*@#+*+*#*##++#+=*##**=#*#-#+*#**+*-=+-=*#%%%#=*#%##................................-++*==:.....:=-=+**=-++=*+*#+*++=*=*++=*=+=*=+:-+=................=#****+-#**####%##**%###@%##**+*#*=*#+**=-*##*##*#%#=##**#%**%#+
-#%%#%%#=*#+###*#**+##++#%###*+*#*#+***#%*+*#+*#####%++#*+*%##.........-###@#%.........#+-**#*###+*#=+###%@%##**+*............................:+..........=#*+**=##++#%*++*+=%*+#*#*##*+#%*#*#++****+%%%#%%*=#*++#*-*#++#%++*%%**##*#+++#*=*%*+...............................-.-.-==-.....:--=*-+.:===-=+=+-*+=*+*==+:=*+==-+---......#.+....*.+=*#**#+=+##*#%#*##%+#*++%##***=+#***#%##%#**#=*#+=*#*+#+++#+*###
-=%#+%%*+***=#***#%##%**##=##%#*##=+#***##*#%#**%*####**%++........@@#######%%#%#........**#*##*%%%*#+%*=+#*+*##+*=...............::.....-:...:%..*+.......*==####%*+##*#*-*+##++*#**%*#=****%@%*%#*+++*++#*++*#+###*%%**##++*++#%#*+#=-*#++#**...............................:-:.:::........:----.--::=-----:+=-=+=:=-+:-+--==........#*=++#**##**%#####...+.........#-...*:*#++*#+=#%+##****++-++#%#*%##*#%=*%#
-=+##+%#*###+*###@*#%##*%%*-*#++#*#+*@**#%%#%#+**+==#***%........@@%*#%%%%%%@@@%%@@........*#-+#++*%#*###*##*##%#%%*+*#*-**+*##+#*=+#*#*##++#+=++=+*#==+*:-*=**##%%*****+###+#*#++%*=#%#%*#%#*#*#**#=#+*==#*#%%#*#%#+*%###*+=*+==#+*#%###%#.#%#...................................-.:...........:=-:..-.:.-:::--:.::::-:::-.:..:...........-..:.==+#***%#%##+=..:..-#*%%###*+##*%%##+*#++*+*#####%*#**+#%#*##+=#+
-##%*+##*****##*=#%==*#*+%#***#**#%*#%*=+#+=+%#*##*=%#.........%@*%#%=@@@%@@####@%@%..........*#+++%+*##%*%#=*##+*............+.=%#+#%#=*#*##*=-*+:**#+#@###**#%%+**#*#*=-*#+*#*##*%**%#####+=*#-+%##*%%#*##**%##***=+*+=*###@%#+%#**%%+*#*=:*=.....................................................::..:.:.:..............:...............*.....**#*=*#*+#####@**##**####%*+=*==+##%##%#%#+##%*##*=##=+*%*%%#+*#
-*##%+*#+++%####***#*######***%*+##+*%##*##**####%##..........#%*%##+%:=+@%@%%@@*%@%#+..........#**##=##*-*#*+##++++-#.#....-.=.*+%*+##+***##%#*%%#-......-+**=%%+**###%###%#*#%++#%**+%#+*###%%%****=#**#%++=*##*##*##%**#***##**####*+*%##.##.......................................................................:......:.........*##***++**+#+###%#:=+#+*..:..-.+*.......%#*##**%#+%#+#*%=+%####*=#%*###*#%
-#*##*#*#**#**#*%#%+*##*++*++*%***#***%%#%@#+%+-=+...........*#%#**@-%+*=##%%*@%@#%#%@=...........*###=#*#*%#%###+#+*+-#*+##**#***#%#%%%*%%*+#*+*#*++#=:#*=+##*#%##**#*%@*%%%+-+*-**%##%#+*####*##+#*++%#*##***#*+*%%#%%%*+*==*#**##=#*%###%.%#...............................................................................................+***++#+*#%*=+*.....+##.%#...-..#%**%%+*#++*%%*%%+*#####%##%#**#=*#
-%#####%%%**#=+**-*#+*#%##*#%#@##%*%++*+-*##*#+.............*@%*##%@%###=.-=@@@%@@%%%%%.............-##*%**##++%@+#+*==#+=*##=**+**##*%#*#**+-+*=****#%**##*%#*#%###%#++#*+%%##%#**###%%**=%#=++#+######%*###%#@#+=##=*%##*%#*#%-#%%*#%#+-*+.+*.........................................................................................++.*..#%#%****++@##%#*##%+####*##=++*+*####%**#%%+%###%%++%+#+%***#++#*=*
-#*++*=+#*####**%+**#*%#%*%%*##**+%#-.......................##%*%%@#%%**@%+=+-*@#*@#%@*%...............###++*++#*#..............*+%*+#*######%#%**##**#+***=**+=##%*%##*##+###%##++*%*=*%####%+##*##%##*%#=*#**#%#+#*++##**##*+#*++#++%%*=+*.**........................................................................................+**#+*#+**%#*##%*#:-+*.........+*.........#*%%#*%*++*+***+###*#%*+#%#%##*#
-%*+##*+##++%#*##%*@#++#-................................#@+##*%@@@%%%@@#*@%=@#*@@==%%@#................+#**#%##%*.....=..-.....%#%%##*%#*#%*#*%#*#=#*#==##*#%#+##**####%@+*#*+**#****=+##**%#*%##-+*#**%%+#%%+*%##%%#*##=+#*+*+#+#%***%#%#%-*#........................................................................................+##**+#++###+*##*+...=.........++.........==***+%#**##=*#**%####*++#++*+++
-%#**%###%**=..........................................*+@#%%%%#=.-.@#+%#+@*+++@*@%@#%%@...............:*##+##*+#*+***=*######*%#*+%#*+##*+*+-*#**%##*##+*####*#%%##**+*#*#+***#%#*#@%#*##+=%#+*##***%*###%#*@+**+=-#***#*###*#%%%#@%*+**+##:+#........................................................................................###.#.**==+%=+##*#%%##*###**#***+#+-*#*+##*+*#+##%#%#%*+%+-*#=+##*+##*##*#
-+*=.................................................=#@#%=+@@#%...-.+**...+*.:-%+:#%%%%..............:*+*#++****%*+=#=*%:=.:..-%*:%#-**%###++#%*#%%%*##+=**+##+*#%+#%#+#%##%%#+##+-=#*#*%#++*##%%##*%*-+#*+#####*++%##**%*###=+##*##*+#*=-#-+#........................................................................................++****##**#@*+*##+#*+#*..=**++.#+....-....%*.**-=#+****##**+#=*##*+%###***
-=............................................:.=::-.--%@%+#@@%#..*.%=+.....@@##+:+#@@@*..............%%####*##*##.*.*.-....=..#%#=##+#######*+%#-***+*%#=#*+=%*+#%#%#%*+##*+#%+#**=*##*=%%#%##+*###*#%+++***#*##%#*##*+*%#*##+:**++#%*#@##%*-+.........................................................................................:.:=....#=%#*#*++...=.........**.........#+.*%*+%*=+##*%#%**#+*##+*%*+#*=
-......................................-:*.=-+=-.-:-....-@*%@@%%%#:-#*............#@#%@..............*##+**#*+*=++#+-#**#=#=%+**#@##%#%*+++###+*%+***++##+%###%##*#+**#**#*#+#*###%@###+##*#+*#++*#**#%##%%#*#+++##*+%**+%#*#%%%####+%#*##+==:*.................................................................................................+.#**+*#*+#**%####%#*##++***+*#*+*+#+##%%%#*##++#*+#*****=#%%#%##
-.......................-.:.-=:=-=..-==..:.....::=.....*%#@*@#@%%#%#@........:....%%%...............#***==**=#*#*#%**%####*#+-*--#*+****%###%#+#%##*##=+*==##+*%++%#+*#*##%##*%#*#%*+%%**=%#*%@##%@#*==.++#*+##*=##.....:+:++**++*#*#%+-*##=#-#........................................................................................-===%***%##*#%#%#**##**..++#.*+#+.:##**#*##%-=+#+*#**##=+#++**#*#%+#*#+*#*
-............##.:....:............................=-+...+@#@%@@@%%@...............%%...............@###%#**#+*%##%%#-=%++.-....*#*%+*%#%%%#*%#=+##-*#*=*##+##**%*##%#+*%=*##+#%*=+*++*#%#%##=*%#+#%#*+***..##*#*.##........:##*--#***###*%**#.*........................................................................................+%..*.*+##.*#++##+.......**###.=%.........%%..**+*%**##%###**%#+#%***#=+#*
-......:...-:.:...................................:.%....#%%@*%@@@@...............%-#.............+%%##@##*##**#+=****##=.*....###@**##+###++#*+#***%#*%#####*-##*+*#***=**#+*%#%%%%###@**#%*=*#=+#%#%@%#..#*=#%.*+..-.*=..%#%@%+*#%#%***#+=+.+........................................................................................#*....:.:#.**%++*#+*##*%%#*%%#=##*+##=-#***%##%@%**%**#**#**=#*==+++*####@
-....-*..:.......................................-=-.-...@+#*%%#%@@+.............................##**++*#**#*+**+=**%##%#*#*=*#**#%***#+=##**###%%#*##*=#**+#+=#*++*##**%*#%*+#%+*##*+*#*+#%%*##%*##*****..#+++#####.*:++=.#+*##**++**#+*###*.#........................................................................................#*:-***=++=#%%%%%#...:-+#+=*%*==*++%#%*@#+++%=+##*##==#%++%%#*%**##+**#**%
-....*=.....................................:...+#-...=..%##@@@%@%%%@#....:+.=..................%#*+*+=+#*+%#++#+**#*####.*....***#%#%*%=%@#%%%##%#*=**=#++*###+#++###*##+**#+=*#+*#**###*#####%%++++==+#%**##+##*#@#*##+++*==**++##+*#%#%##*.#*+*#+*%#*##*++*=+*++*##*##++#**##%%##**=++##=**##*#%=%#%#%*###*++**+*#***##+%#%%*%+=+#*--*:+*++.:*+*#.*##*-.+#=+*%#+#%#*%%##%@#*%*==#==*#+*%#=*%*#*%*#%#+##+***+**
-....##-:.......%=--..-..::-.=+**::-+---=.#=+.:#.......:.*%%%%*%#@%@#@%#:......................+#****%#*###%%%#%%++=+=+#*.:.:.*##*%##*#%*+**+*%#+##*#*#+*###%@##+%**+..*#.=*#*=.%*..=#*#%#*#%+*###+*#***%###%%+**++#++#%*+-*+=+%###%#*#######.%#*+*==*#++%#*.-.......=.....=....:.......-.....+............+....:..=....=.......=....=.......=........#*#***#**+###*#**##*=*##+##*++*=*#*+%%##%***#*+*#*#**-**==*
-......+=:.......:-*%#*#-:+.:.......................:=+=*#%#%#@#-+#+.....=....................#+*%#*##*#*#+.%%+*+%++%++*#++*#*###++=++#%*###+=*++#####*#**#+***=##+++..=*.*+%%%.#*...+..##=*.:-+%%*%%%**%**###+*#+:#**+%#%%%%**##*##****+-*#=.###@%%*##*#+#*....:..........*......*#.*=.+..+..#.-..-..=...:*-:*..=.#-+..=.:=.:=.+*+#=%#=+-==+%#+#=+--#*=####*##*##+*##=+*+=*+**###%%%#*##+##*+*=+=*==+*+*##%%%#**
-.......-*#..:......**-.*-.........................=**#*==.%%==%#@#:.........................#%*=##*=##*###**%++#%#+%#**#*-#%++#**+##=*%###@###%++##+*%***#=#**=+%*%*..+*.-+##=..+...+..%###.:*...=..#*=#***###@%%++*-..#*=##++**-.......+*##.##++##*###+===+*#*#*#+*#*+*+*##*#%%+***+*%**+@+=*#**###*##*##++**+*##=***+**##*#+***#=+*#*+*#+*+#*#%%#%%#++**=*#+##*+=####%@%%%#=+#*=+#++#*++*+=##*#%%**+#+#**+#%**
-.........**%-......:=+::........................:-*+%*#:#=%*--=-@*%=......:................=****#%#**%#*%%%%@#+##*:***###*+-=.#%**%###+#+*#**#*#*#%=+%#*#%##%#*****+%*+#*-*=*=.+....#..#*+=.*#...+..##*#.**##**##=.....#+++****=.......:-*##.+#*=*****#**#*.+.....+............+..................-............:.........................-......+#++#%*+**+*%%##%%**%*:#%++#*##+%=+%*+###*#++####+##*-#+==*++#++
-##.........*=*......=.+*........................-.#*+#%.+::.......-#.+=...--..............#++%#*%#%+*%+-##=*#*#*%#++#++%%###+#+*+-%%#+#%+=*+:+*%#**%##%**%#*##***%-=****%###%#.*++.-#..*#+-.#*..-*:=%#=%.%*%#+-+*-.*#..#%***#*#*#*.....*.+*#.#*######%%%###.........=.............-.-.............:.......*.--.=..:....+....-..+..-.*....=..=...+#*+%%##%##**#*%%###%*=#++*+%%#@%#+*#*+##****=++-:%*+*%**####%**
-*#=-.........*#*.......::*-...................-:##++--=.:.........=*-...=....:.............#*#*+*##+##**+#=+*%*#%@#*##*###*###+#+-+##%#%#+%#*++#=###*##*=#==*##+%#*##%#*#%**##+%*#+*#..#@%***#...*..##*-.%+#%####*.....###+##=+%#-..-.:#*+*%.*###-%##=#*+##**+#++*=+*####%#%#*#***+%#+***+**=+####%#*###*#%+*##+++*++**##***##*+###+**#-+*++*#%###%#*%#*#*#+%*++##**%####%#*##*%%#**%#-*#=#%**%#*++*+*##*%%**%#*
-#%**#..........-.#*+.......+#........##-+-+........==...............-=...=....:..............***=*%+*%*#%@#*##++*##+##*+##=#%%%@%##%#*=##=+##+*%*+#*+*##**#*+*#++###*#*+*#+=*#***#*+#%**%#**##...#.:***=*#*+%#*#%##*#*==##*##*=+%#*#%#*%%#*#.**#++*#++#*+*#.*-.=.=#.-..+-.-..:.+..-.#=....=.=.....*....=.......-..*.-..:....=....:.......=......*#**###+**#*##***%#**#**%##*##+=****##+##+=##:*#***#+++#-#**++#*
-#%%%*#.........-+...#.:....-:===.:#+-*.=*:@=*#===..................:....-=....................##+%%*++#-**###%%+*+*+#%##%##**#+#%%#%%*=**=+##*##%###****#*%%###+=##**+*+###*#%##%%##*##=*#**%#%***####%*%##==#*=*######**%*%#%####++#+=*#+*#.#**%***#*%%###.:.....+............+..+.#=.:..-.-:....=....*..*.+-.+..+....+....+..+.=..-....+......-###*#%***#**#%*#%**+#*=*##+##**#%*#*##*@**##=-*#++#**##*+*#*###
-**%*.........++:.......:......=-.-**+.........................:=:-:..=..=-.:....................####=*%#+*##*#%##%%=#@%####*#%+=***+@%*%%#++#####**%=-*#=+*#*#*#*#%#+*%%*%%#*%+=*#*##@##+####@%**%*+++*=*%%%*#*=*+#%%%%###+++#+*##**%*+=##*%=#+##*+#*-+#**#=#+=+:=***#+####=****####@=+**++#%+*#######*#%###**#+=+**+*#%#**%####***#+-#*++#***#*#*#*####+*#=:*#*=*#*#%#**%#%%#***%=-**=++***#*#*#++%###%#*#*+#*#
-*%%.........-*#:.........=*:...:.+.=.-..=..................-.=..=.....:.+..+-:.......:...........*%##%*#*#%#**##*#%*+*+++%*#%#*#%@+#=+*#%%*+%++*#**##*#%*++#*+%###@#++##=*######+#%+%#%%*%#++#*+***#*#%*+#%#%#@*##%+##%###*++#++*%%#%%#%@#+*.%+%%++#=-*#**#%%*+#-*#++#-#+#*.:-+-..=.%*.=..*+-+.#*+=.+..*....%*.:....=..-.++.:.........#%++##*###*+**++*#*####*#**#@####****+**%**#***#+=+*+=%%#*##+##**##+*%++%*
-%#..........*-=...........=+#.............:...........-+=:...:.-=:=+---+...............=...........##+###*##+*#*+**%##%**##***###%#*%#*+%#++*#+*#**%%**%**#%#+-*+*##+**##*%*+%@##%@##+%#++##=+#**#%#*#%#**##=*##+*#+=#%*#*%%#%#++##+*#*+##++.%#+%%*#%#**#++.=.....-....-.-*.=-.=..=.+-.=..+.#-.#::+.+:.#..=.#=.#..+.*.:+.::.*..=.*..=.##+*=#*.*-*+%#++*#+*%#*%##*##*=#***%#*+##+*%*+#%#*+#++**+*#*++*==*#*#%#**#
-%..........++:+........:-=-:*#@@*+#=.::............:##......-+:.-:%............:.........:+.........==+#***%#*##+####@#***#*=**+*#*+*##+*##**#%*#*+##+=*##*%%=**#+#%##@@#*##+-*#+#**+*%-**%%####*+*#++#***+%**#+*#%%+#...+#++#**##%+=##=*#%#-#*=##+=%*%*#=+.-..*.=#*++##=##**#=#-*#=+===*=++**##*#+#%#%%##*%#=++*=*#**+##*+%%##%%+++=-+##**#*=+####%%%#**+++=-+#+*#*=*#####%##%+-+#++##+*%%=+#**#%*##%**#**#**+.
-..........=-#+:........-=*%%@#%#*#................%+-:..:.-:#:..*=-+.............=.........=-.........*###%%%#*#*++*#*%##+%***#*+%##%%%###+-+%+*#%##+*=+%%+%%%###*#****###+%+:+**+%%%#%%#**#**###=##++%##*%@%**#*=#%*#%+=-%**##*#%#%#%**##%#.##==#=-*#+*###%%#*####%###*++#*-=*+=%%%##*#*##*#*%**#+.**-=##*-*-##+-*####%.=:+*.#-.+.:=.=+.=.*%*=.#=-*#+#%#**=**##*##%#**#-=**+*##+=#*-+**#%##*%##*#*+%%%*#*=++=.-
-..........:%........--=**%=%*=+::..............+-:........-:.++=:-.................+:.:................+#==+++###*+%#=*%#*#*#**#*%#++##*###==##*###%#%**%#**%**#**=#++=*%*##%%%##**%**##*=+***+*##%%%*#%*+#**+*#*+#*+++.:##%**##.#%#**#+=#*=.*%##*%##***##+.-.....-.=.+%+=*....*:*%++=.#:#*....#*+*.+:*=*=+.#:.%.=:.#..*.+..##++......+......#-.*****=*#%##%%#+#%+#%#+*#++=**+%#+#@%#*##+%+**%+*+*#-+*+*###%#%-#
-.........*%=-.:.....==##*=+==-:..............=#.:.......-:.:+#.......................--..:....:-.........*+*#**#%%%###*%*=*#+*%%*+**+**#*##%#%%***#=*#*+*#++#+*##*##%#+*%**#*+**+###*#+#*##%#+*##=+#*+=***+***###*#*#+#**+*#*%##=+#%*####*#*=#%+*%%#%#*+#*+.+#=*##+**++#*-*:**-#:#**+**++##+***+*##*%%##%#+.+-=+=**.**-#%##%%%#***+-##+#*+=-*#**%@#@#*++#*+###+**+*####%#%%##**#***#**#**#**+##**%#***#+*%#*#=+#
-..........*=.......=**#::-.=...-............:........=--:-@.............................-:-.....:=.........@##+**+*##**%%**%#=##%#*%#**#=*##=*@####=+#**%#**###**#*##*###%=*##+###*#%**#***%%#+##+++####%#%*#*+#%##%*+*#*=*%#*###**##*%#*%%@**:+-#+=+%####*#%##%%%%%#%+%#=+#**###*##****++#####**%+*%#%##%#*##+#+##*%#*#+****+#*%**=*-#+##*+=-*=+#+=###+*******#####%+-**==#%*=**=+#**%#%#%*+*#*+**++#%+*#+=#+*#
-........:+-+-....-.=----.................+*...............................................#........-........#%###*=#*#+#%#*#%***+*+###*#******%%**%#*#%*###*##**+#=+++*+###%@####%**#+**#-***=+#%%*%####%%****=**-+####%##%@=*#%#*=#++#*+=%#:*#####*+#@*%@#.........+-.+..:.:..:..:.+.....+............=....-..=....%............%.:.....-....:.+*-*#%*#%#+#%%+##*+##+==#==##**%%#*##*#%%##%+=%+-=*++#%*%#%*+*#+
-........#%--+........................:=.+*...............=...................................:-....-..........*%%%##%%#+#*##**=%#=+%**##%#%%##%%###*+%%#+*#=+##*##%***+*%#*%%#*=#*+**#**%**+##+##%*+*#+*#%*#%#%*##*%%####*+*#*+*#+=%%##%**#%-*+%#*#+++#==%#.-..+.:+.=*.*-:*.+:.*..=.+..*..:*...#..*.:..*.=:.=..=-*#.**.*=#=*#.*=.*==:#*:-#:==*#*%%#++%=+%%#***==*+=#%#+=-+=##*###+*#*+=**+*%##*%#+#**###*%%%*@*+
-........##=--......:................-:*+..............=*.........................................:...:#-.......+*+#+##*#*#*#%*#@####*++%*+#%**##**+***%%*##++#*+*%*+*#*+##*+#%#**%++*%*#%##+%%***#**%%#*#%**=#**%*#*#***####%+####+####@%%%**==%*+%*+=**=+%**%#*##*#*#**##++#+**#==*#=###%%%*+***#%#*+#*+**#**%*#%*+***++*%#+*%*++%**##+*##***#*+***+**#*##**#%+##**##%#*#*##*-=###%@*#%%+##++#%#*##**+++#*+*#%*
-........*#+=.........................-*................................................................=.........####%#*#%*#%**#%*+%##=%%**%#*##**#*#*+#*##%+**+:*+++#*##%*+#%#%+*@####+#**+#%%**%%#%%%##%%==#*+#%%*#%+.*%**@@#@#*=%#***%#*%++=**+#%#**%###.-....--.........**.:..-....#.+*....+....+-.+....-....-..-.........#....*.......+....-**###*#=#***%*###%++#+++%**##**##+#%**@%***%-=+++##**%######%#%
-:.......=*%#*...................:=-:-.............=.......................................................-.......*#%%#*#%#*+#==+#*+%%%###+####@%#%+++-*++#**##%+##%##*#%@##+#*==*++#%%#+*####%%#%#+=+%++%%*##*#%@@#*#*-#*+-##+#%#*#%%##%*#%#%+%#++#+-##**#.#..+.:-==:.*:=+.++.*..*.#*-+.:+.*=.#.=*.#-.*.:=.*..-.=..=.-*.+..+.#..==#..#.-=.%=.:.+*%##%%#*+**+*++=#.......%##*##*#%++++-##+**##*##**#########:=*-
-+*......=#+*+%-:.....:.........::-++................................................................*......=........=**=**##%@%*##+#@##%%#%%%*+**+*%%**%#+##+*%*#%%#=+#*++%*+#****#**%%##%##*+#+#%%%****+*%##%#%+%#+*#*.*+%=*#+=#%##%%%**#=+%%=*#*=**++***%%#*#%*%%%####+#*+*#+-=+++%**@%%**%#*+**#%*+#**+*##*%#**##*####*%#=+**+*#%#+###+#*#*#%**+*==*#**##+*%#**.......*******#%##+*#*%#**%%##%#+%#==**+##%+*+
-%##*.....%%**+=*....:.......+==++-...................................................*+......................-:......*@#*##*#%*###*+##*+##**@%*#%*+**+*#%#+%+=**++*%*+#***####%%##%#+*#++*%#=###**#%%%%#**#*=#*#+#%*=#+*#%%%%###*#*+#**##*++*++#%#%##%##***%*+###*+++***+#*####*#+*+*****%*.*:......*.......-..-.=..-.=+......-....+....-:......#+#%+#*+-*####%#*%.......##*+#%*+%%%%%##*#*+#***%*+**=+##*%%###%
-==*%*.....%#%**+#=.:=..=*.=##::+...........#...........................@@@@%@#%%#.................*++..........-.......#*%#**=#**%#*###%#%##%%##%***#*-+*=*##*###+%#+%%@#+#**+*+**#*+#%#*#%%#*%#++%#-*##**##*#####@%####+#*=+++**##*##*+%@%##+++#+-***+%#**%#+**+#%#**%***#+**##*#**=#==*#+=%::*.==.*..*.#=.*..:.=..+..*.*..:.#..=.+..+....*.=+.%*%%%=%#+=*+++###*%%*###+%%%#%#*++*--*+**##=*#**####%%####++*-+#
-#=%###....-++%*##+**+-=*****+..............-...........................%@@#%##%@%%@@#@%@%%%#%.........:.:......=........-%%%###**#@%#**#%%*:+#++%*%#%##+##+*%#*%*++%+-+#+*#*+###+*%%##%##+*%*=#%#%%#@+%%%*#@%#%#=+###*%**+*#=**#:#@%#@%+=%#=*#*+%+=++*+**#*#%####*#%##%*#**+=*#==#*##@%*+%*#*%#*%%+*%*-=*#**%+%*%+=*#%**#+=+*++*#+###*+##*#%##**#+*+#*=###*%%**#%#%%###*+*=*-+###%*#-+#*#%##*@*#***+#***%#%##+=*
-#+#*****....*#*#%+%+*=%*=+............................................@%+@%@%@@#%%@#%@%%%%%@#@#@#@#%@@@..=..-.............%*#*#%*#*==##%**#*##*+#*#=%##*##=##=**#*+#+=+##*#%*%%%%*#%***%#*#@+=*##%%#%##*#+%%####++##+=%%##%%#*#*+*#%##***+*-=##*##%###%###.#*#*##++#*+*%*#*%###***%####**##+=#=+%*+#*+***+..+.*+....*....+......+#.+.......-....-*+##+=*#*#%%#*%#=###*##+=*#-=##*%%%##%#+*#**%%*##+*+#+*%%%#%%#%
-@****#=**.....=###**##*-..............................................@@**@@@%%@@%*#@%%@%@#%%%*@@*%%@%@%..#.**..:.........##*#*%###*=+#+*##**%@*+#*+*#+**%#*%*=*%###@#*#%*+#%**##*+*###%%%#@%*#=#*#*%+##%++#*#%#@%%%#*%#*#%%*+*%++##*#@##@##**#+*###*##**%****##%#####***+##%#%%*+#+=*##+##**#++**##%%%*#-..:....-.......+.........:..-.........*%####+*#*=*#####++##+##%%%#**%*#-##*+*+*+**##%#%%%*#%#*#%#*%%*+
-#@%*#%*#**..............................#.............................%##@%##%@#%@%%%%@#%%%#*%%##@%%%%%%#.:.#@.=..........###*#%%%%%#+###+#**#%##**+****#%*##%##+#=*%#*##**+*#+#%###%#+#*#*%##*%%+*%%%#%%%#%#*#%#+*@#%%#+++#*##%###%+*###*#%###++#*+*#%##@##%#*#%%%###*%*+##+=##**##*###*#@@%#@#+**+-#*#***#*.::-%=:++#=*#=:*#*##*##*%*+**####+:**+***#***++%%#%%%*%#**#+***#*#%+##%##%@*##%*##=+#%#%%**##*+##=*
-*%###***%*.+.............................+............................@@#%@@@%##@@%@#@@%%##%#%*%%@@#@@@#@#.=*@............%%%*#%*+#%###*@+*#*#%#**%%#%*+*#*###**%*=+**+**###%####%#@%%##@*=+***#@%#*#++##%##%++%%=+###*.@%%%#++#%#*%*=**:=#**#%%%##%*####%%%***++#==***%%###*+#%%*#*##*#*=+*=*%+###++**+*%*##+%##*+*###*:+:=*##:**#+%**.*+*+.-..#*=-#%##%%#%#++*%##%*++@#==*%*#+*%*%#*%#*##%#+##++*#+*%##%@##*=#
-+#*+=#**%%.#%*.........:...................+..........................@%@#@#%%%%%%%#@#@%#@%@#@%*%%@%%@%*...@##............*#%*+%%*+##*%%#%@%#*##**%%####=**-**#*%%##%%#*#**#%*###==+%##*%%#####*###+@*=+*#*##@%@@*#%%*++##+*%*=#%++%##%####%*##*####-+*=####%*%*#*#*##**##%##+*%#*=#%*#%#**%%*#%##=.+....:..+.:.......:..:.=..=....=..-.........-%#**#*#*#*=#**=%*+**%#%%%*#%####*##*+*#+-*##*@%%%##*#%##%##*#**
-%%%*###*%#+%@@#........+...................+-........................#@###%%@%#%##*#%%@#%@%@@@%%#%%%#####@%@*+............+#%@##%%#%%***#**##+*#++##*#%#%#@##%+***##*%%=+#==*%**#%*#%##+%*#*@#++*##*####%%##%%*#%%+##%++#%+#%#+###+###*#%####**#*+##*+##=#######%#*#%%**##+*#*+**++#*+*##%%@#*#%**#.=..=.*.:*.=:.+.*%##-.**+.:#.=+.-..#.*.++:....##+=#*=+%+*######***####%*%%#*#*%*#%#*%%*#%#*%#+#%####***%###%#
-*##**%*++#++*##*................#....................................+#@@@#%@@%@%%%%@%@#%#%@@%#%*@%#@%#%.@*@%.............*#@#+%%%*#%*+%%%****##%*####**##%#*#**=+*+%%%*#%%*%%#*#@###%*=*%#+*@#*#%##*#%#%%#++*+**#+*#%#*%##%%%+%##+#*=++#**%%**###@@%%@%####*:#..#**####**%*%*+%##**#*+#*=*#%*#*#+*#=+#*##%%*###=#%**#+*++%+**+###%#+##*=*%#+*#*-##**%%#+#*++#*##@*#=*-=*##*#%##%#**@*%%%+###*=**+###*.%**%#*%%#
-**##+%@%**%+##%*%................#...................................%@%%#%@%@%%#%@%%%%##@#@%%@@%#%%@#*%.%#%@.............#%*@*+*#+%#%#%%%##%*+#%**%+-*#+=%+###%*#*#*%%##%###*#=*####%@%##%#*%#*###++#+*+#@##%%##*####*##%*=%**%%%#*#**#%##%##*%%**+*+=%##%##+*#=*%**%%#%*#*%#+*%**#%#+=#**#*+*%#*#%#+####**#*%*-+#**#%###%#*..##+=*+++=..*#*#%%###++#%+++#+-#+*=***#*#*##%##@#*%#=*%+=+*++*@%#@##*%##%@#*%%=+*#
-+*##**##*%%##@#++..................@.................................#%#@%@#%%%%###@@%@@@@%#@*%%%%%%@@@%:%%%#.............%##@%%#%*##==*%%*+*=++%*=@%+%%%*#***%.*##*+:#*+*%#*#**=***##%*#%*****+**@*=@%##*###%##*@#+*%*+#@#*%#-=%%##%#%%*#+#*#+#@+=#+++*#+#%##%###%###*+*#+**++-+%-+%*%@#@#*@+*#**##%*+#*=#--.##%*#*+*#@#*##-...=.*%#####...-*%%*=#*+-**+#%%###=+##+#%*#****##%+#%#*****#*=#%%#%@**##++@#*%#++%#
-%%@%*=%*+*%*+#*#+......=........:...#...............................:@@*#@%%@@@@%@@@#@*@@@%@@%%@@@%@@%@-%@%@%.............##%@#+**=*%%*%*#**##**%#+#%##@%##%##**+*@#*+#%***##*%###%#++#*+*##*#%#+*%*##%#*##*#*%***#+**#*#%%%#%%#*%***#+*#%+=##**%##@%%#%%++..++#+*...###=#..%##*#%#+*+*#%#+*%*=#*++##**%#**##+#%###%##+*#-*##**#+##%%*###**%*++#***#*+##=*%*+#%%*#*#=+#**#%*+##+#%##%@@%%#**#+=*#*+*#==##*##%#@%
-%##@#*##+*#%##%%*-=.:..=........-...*...................:...........-####%@@@%@%%@@%@@@#%@*%#@%%%%*#-%%%%%%%%.............@+###%+*#+#%%##%##%%##%%+=%+##%##@@*+#++##**#%**##+#%##*%*#+@#+*%%*###*%##%#%##+###+*##%###%###%###%%*+#+=+*#*#%#*#%##%##%####*==......=......*..#*%%###+-+#++%%**.**+...+%#*%%*..+*###**%##*##+##%#+*..=#++..+-*#+=+##+###*#%***#**%#**%#*+**+#%#*####*##*%#*##+-*#*+##*##**%#%*#%#*%
-#+*%*%###*%%%#%%*.=...-#.........-..................................-.@%@@@%%@%%%%@@@#%@#%##%@%##%%%*%%#-*%**.:..:.-.....:%+=+##+%%%#@%*%%%%*@%%%#++#+:####%%%%##**###%@%**%+-=+*+#%##@##%#%#%@+*##*+*######%%%##%%#####=##++*#%#*####%*#%%###*=+#==*#+%@#+.................+...-#%*..........#-...+@%#*##....:#%#+#%*%%%##%%*##*..+==:.+.##%#*#*#*%%*#**-**=-*##*#@#%%*#%#%**#*+*+=-*##%%%*%##*%%#%@##**#+#%*=#
-###*%#%%%#+#*-*#=.:.--=*..........@##..................*:....:......+:-..+@@@#%@#%%*%#%@%@@*%@@#*#%@*@@%+@@-%....:::......%*%%%**%%#*%%%%####%@+##%#@@#*%#*#%......#+-+*%#*%#*+*###@###@*###=+%%%+*%#=####%%%%#%*+##*@@#@###*+%%##%%#%#**#%**%%#*#*+#*+*%#####*##+=***#%*+#*:=#*+#%#+%#=.+**=#-.....:#++#%***%*#%%*#%##*%*****+##*#+##*##**%#++**+=+#+*###%%#**###*%##*%+###**##**%%*+##*%##%%%#*#==*%+###+*#*+#
-###%%#*#%+*%%##%+:.-=:*+............=..................+...........-+:=:#%@%=....**#%@#%@%@%%#@@@@%@#@#.*.%*:.:.*==.......#%#*%#**#%**@%##*##*%*+#***%*##*.......#=*=.-######%*#%#+##+**%**%+**%##%#%###%#+###**%*%%**#@#*%#**#**=##*#@*++#*+#%###%#**#*#***#*++#+=*#**#%#*#####*##%+##+*..........=.=:-=..+#%*%%%@+%%*#%#@*#:.+#%###%***#+#####%#**#*=+##+%*#*%%+***+#%###%#+#%##%####+++%*****##%+*#**%%*%@@##
-####%%####+%@%%%*:-..:-#............*+................+:=........:..:+=+=+#*%++#=***-....+@%@#@@@%%%@+@##%%@.:##%.........#**+##*##%##%*#**=%%%*=*++=*%**.........+#.......:**=*###%#+#%#%@%@*+%**+#%#*%###%%#%%%%%@%+#%++###*%%###*%##%+#%#++**:*#-+###*%*+%#**@#=..*+##-..#...=***.....................-#=#*-*%%%*%*#*#%#***..#**=*#+***#+#*#%%%#%%%+:=#+*#%+#%*#%#*+%%*%%#=##++=*+=#*#%##+**#+#@%##**=#*+*%**
-#@@%%%**%%+=#**%#=+=++@+............#%.................=-......:..--::=#===**=+*-#=*:%+*#*+#==......:=@@%#@%.+**==...====*#%%#%%%#%#@##%+..+=*#%#*#-+*#*..........-=.......:#@*#*##%%%+##*+**###@####%%%####%*+#*+#%%#*#*++*%##%%%###:++*+#%#=*#+=*#+*##*%%***#=#%+:.#..:...=...**#%...................:#%%*##%#%#%%%#%+*#+-*##-%%#**%%#%%%#*#*==#=+##**#%**#%%%*#%#**=%*+#%#*##*=+%#*####%#+=%+++%*+#%=###+*##*
-*#*%#%#####+#%*#*+:++::............=+@...............-=:-...:..-...##*#%%*%*++##++**.+#*++#*#+###+*%+%*##=#%%****==:.....-##+**##++@%*#+....+##%#%#%*+%+..........++:..******%%#%#%%*%#*##++%##%@%#*%#*%*%#%##+*##*#%##%####*##%%**%*==#+++#%#@%###*+*%#*###**#*=+:=#=..=*++#=.+#*#%#...........................................:................##+*####*#*###+*%*%#***##+*%#+*##*#%**##+#%****+=#*#*%#%%##*%*#
-+##*##%%%%%#%%+%:%*#-=%%@#.:.....@###+............#%+==+::.::...:**%#*#%*=%%###@#-*-+.+*=*:-#=-+%-#+#=#*#+**%##==:-=-::.-.**#...*#++*=:.....*+###+*%#=#*===......+%*...-*##+#%#+*@*=%##%@@##%#+=#@%###**#%##%@%##%*#*#+###**#*=#####%#%*%#+##**#+*##**#**+#####**##*#*+*%###%#=*#-+###+..........................................................*%**##++##+###+*##*%@%*#@#*##*+##=*##+##*#@#*%##**%***##*#*###=
-#*%%##**-+*=**##%**+#*+#%#**%#+-*=-+#-*%#=:*::..-+*%#*+++-=*#......*.-+*#++**+##%+%%*-*+.-==#++:##=+*#*==#++=+==+....:-:::*##%................=###+%=-=:..##=.+-.#*=........#%###@#*###=##**%#*=+%%+%@%###%**##=#%*#%#=.***%*#####++%*##%*+**=#**+##**#%**##+###%#%**%+:+*+*###+*+-%#+=#%*+*#-...................................................+#**##**##*##%##*.:-#=:+####*#=####%%#*#*+%#+*#%#%@*%##=+#%+###
--..****-==#.#*%#%.##.*#+........:....###%...+:.=####:.......#*#+*--*#*#*#*+#*:+*-+#%####%####*#%##:==++*=+*=*=-:==-::..:=-##*#=.......................=#..**=:#*.+*-....-...*%##%#%*#%##=#%#=#%##%#+#@%##%%#+*%=+#%#%*#-%#*#%%*#%#**+*+#%#*%%#%%#**#**###*#*=.**==.....+##..#*...#++..................=..:=...-+*+#*+#**+**#*####***==#*+=##+-+%*+%**#%*#@#+=**#+*...*%=+###*%%#%%*%%*+*%@#*#*-##**##*#%##@***%*
-...##*%++#+.#.%*.##+##...........-..*##+%=......***#........=*=*...........:....:::-=+==...::+%%#**.+*%=-+.=.+.:.-..:+=+*:%+%#+-..................=+*==##=+*..-..##*-.-*+%@##*#+++##*#%%%@%##%#***%*=**+*%%%%#%##%@*##**+%+==#*+%%*%%%*+*#*##**+*#-**#+*###%##**#-.....**#*++%++.#**.............-.++...................:=##.=..#..=+-+-#=#*#####+##*#*%*%#*-=*#=*...%%###@#*#%**%#+*#+=##+#%#*#%*+###+*#*+#+=*#
-.....-..***.*..*.#+*+#...............**-........=*+-..-....:#*-......:...-::*+:........-.:=.=++*#=...*#%%%#%++##*#%*+*##*#%#*@%+.................+*##%#%%+*-+==..+*%.......+#*%%+****##@*%#+=*#***%%##@%####**%**%#*=*#+*#@#+#+*+##*##%*#*+****+##*+%###%++%##%##*%=...=+##**#*++#++............=+=*=.................:.+=+#.+..#.=*@###%*+##**#**##*=#%##%@%%%%=*...*#*=+#++#%*#%##*%#+#%#*#*+###+*#%+#***%#+*%
-........**+##+#%++%*.%*+..................................::...........--+..:....-..=...=.+-+=#+..:..=+####%*+*###@%##%%+=%++**:.................==+***#..-##++*.=*@#*#%**%#+**#*#%##%#*#%@#*#%%#+%#%%@%#***=*##+##%**##+##%**#%-#%-*##*=#+####+#@#%@%##%*=**-**#+*****##*#%#@%%##*+#*++*%*+*#*.-+++#**#:......-.:+*#-+*+:*%%#+*##=*+**%#*#@#*+%###%%*#%#*+#**#*%###=+####%###**+##+*#%**=+++*=+##*#%%#%##*#%*#%
-..*#####*#*%*#%*#*##=**+=+#*+*####*++*##*#*:.--.+%#*##*=*+##*#++:=:..==:+:.-=+:**..-.--:+=.:#=*+.=:..++###%%%#%%*+*#*=#####*=*-..................#++*#-=+.*%###*.+#%##*%%***+=*#=*#%#*%%**%%@%#%#-=*++#@*#%@%##@#*#@#*#++**==#**#%@##%%#%@###%+-**+-#%*##%#*##*#%#**%*#%**#+*%#*#+**+*#=*+=+##%+%#=**...........::...-..#..+.-....=*#+++%##%@%*%#*+%%*##+++*+=*###%%#*+####%####++*==*#**#%##@###%##%##+#=:##=++
-..**+................:-:.::==*##=*+-=-*--*#+-++==##**%%**%*+*#***+#*=*%+*#*#%##+##**#%%*+#+=#***%%*..#*#***#***%%++#++#%##%#.....................#%%##%+%#**#####*=**+*##*###%###+*%%*#%*+*%##*%%#**@*#####@%*%#+=#%*#%###%%**%#+..%*#*++#*##%%*=*#=*%##%#*#%%##%#%#%*#%*=%#*=##+#%**.........*##*=.....................+..*......####*#*#=**%**#==*#**#%###%######@#*#%*=-#**%####%*+##+#%**%#*+*+-+#+*#%#*%###
-..*.............:..-.:.:..-:.....-=-:---:=#*=*%*..=-.:=+::=:--=:+##*+%#+=+=:++===+::-*==##*##%+=#*...*#*##+#%*+###*%#****....**%=-................:*###+*#+**#++*#**%+=*#+=*#*#+#+=#%#*#***#%*##%*#%##+*#+-#%####++%#+%%%#%%#*#%+.+#...=**%*+%%%*%%**%#+##+=*#*+##**++*#%%%%*###*+@++.........==+#=##%%**+...*++...*##*#*#+....=*#*+##*+%+#+*%*%%%*###**#++*#*#%%++##*#%#+*##=++*#*%#+##+#+**##*++*++#**+###@%#*
-..#+=-.......:...........:-.=-++:-*#+*#+:.-:.-*=+=#+==*#+###+*%+.=+=:+*==++--**++*#*==*::=-=+==*+#...##*@%#*%**#+**%#%-%#*+##+*%#*##:......:.+#*....+*+**#**%%***#%*%%****:=+=-#*#+*##+#%#%%###+**+*%#+#%#*%%*#%%###%=+#*=+%#*#....%..@%@%#%**#*+*#+*######+##%#%%#%##+##*+##**##*%#:........-*#*@#**.=.*.......:=..............+=+-+%**%%%*%%*##%##@#*%#*=-**=#%***%#*##%*%%+=*+*=***###*%#+#####%%##*=+#*++#++
-.=#=...................:.-+#+===+:.+-.-*=:*-:.*++*#**##*-.+*++**=.**=+#*+###+++=:-*-++#:-==.--#*#%::*%#+#*#+#*+-%%-=###%@#*###*%#*#%*.....-*=+####%+:*%#*####%#=**===+**##+*#%*#%%*###*+#*+#*%*%%%**%##%%#*#%+-+#*+#%%##%%#####%@###..@*#+%%%***++##*###*%%*#%**+##*##%%%*=+#+*%##%#%#***+%%**%#==+=-.......................==...#%%#%#+##%#+#+++*+-###*##**%#*%%%#**+-++=+*%#**#**####%####*+*+==**+*%*=##=+#++
-.:+.:..........:..-:+=........==*.:-:-=+**###*+%+=+**:-#-.++-=#%#**##=*+-+**=.=+.-+=-#%***#*+=#-*#..-##==#*+#.#%#@#*%#*#%++##+=*#*=**...#*#%**%%+*%%+**+-+***#%**@+++##+#%#*%%+#%*+=%%#%##*###*##@%*%#*+#*%*#%+#@%#%@%%#@%%%##+##%+##*+%#+#%##%%#%+#+=*#+#*#+##=+*+*%%#%%%%@%#*%%##%#*-+-*##=##@#*%%*##=-=#+**#-*#*%:##:#+*=+#++**%#+**=*=++##*####+*#*+**+***++*%%**++***=+%%*%###*+=++++*##+#**+##+*#%#%#%*##:
-.-+::..................:==-.=:-+#*++#=-=+-.++.=++==*+=**#**#*=-*+--*+:++:.++++**+***=.==:+*+=+++=#..-%%###%+*+*+##*###+###*####**##*%=.=*+*@%+=**+##+=###+#*+*#+*%*#*##-++*+%%*+##+=###%%@%#%%*+*%+##%#**##*%%#%#%#*#*++##+*#*++#*+#@@%#@###*****=+#++#%+*#%#%@%%##*+#*+##+*##+*#+=**.........*#**%%####+*#*+*####%*#*##+##*.+**+*##**##=#%*+*##*#%#=#%+*####%#+*****#%*%%*==#*+#**+##=+**+%###%#*#@**#*++#*+##+
-.*%*--......--=-=-..-=:=*#*++*-:*--+#*=*#=:**++%%##*#-=++:+**+=+=-=#*+#+#++*=-=*==*#=.==--*#++##**...#%.*#%*+-*==*%**#*##@#**@%*@@**%+.=*+**%+#%##*#***%*#%%**%+=**+=%**=*#*+####%#++%*=+##*#*#**##+#%%#+##==#*=##%+#%*+*##%%%#*@+++#*=##*#+%**##**%#####+*#*=##**#%+%##+#==%##*##+**.........#%+=**=+%##*##*%%##%##*+##++**-*#####*#%#%%*%#+=*#=*#**##**####%%%*##*=*+-+#*#*%#*%%*#@@##%#*=*+:++=+#%*%#**#**#%#
-.=*..........*:=+.-.:....+:.....:...+==*##*+#=--+++*#-..+..*#***%*+-*-+#++==-..==-++#+*##*+*+**#**...++++*##*%#%*###*#%**@#+*+*-*#*+*%*#%#%*%*#%%%#++-+#=:+%*##%*###**%##%%####+=#*+++@#=#%#*%@##+#==*#***##*+#*+%%#%@%+**+****#@%*+%##*%###%#%*@#*%**##%#**++#*=*+#*@###%#%#####@#+%........#*%%#%#*#%#*%%%#+%%:*+*.=%#%#*#**%%%**%#++*++#%%*%#+*%%*#@%*+#+-+#***###%#**%@%*####*+=*#++%#**%#=*#**%%*#%#*##***#
-.++:..::.:..............*#*-...:*++:.--=#+=-==..++==#*#=-==+#++-*+::+..:=+*+*++#+=+##++#*=:++.:*==..**%%#*%#++*#*+#*:%***####%%*###+#%#+*%*+*#+#%***##+#+++#*#%%#*%#+=##+%@#+**++*+=*%#%#%**=#%#*%#*==#+=%%###%#+*%###**+#*=+***#%#%%@*####+##*+##-+%+**%*%#%#######*#%#*##**#++#*#+%#***#+*#**#%##*#=#**+%*:.+****+..#%%#*#==**#*#=**+#*+*#*#####*%+=%@*#%*+*#*=#%##%%#*#%++######+*#==#%*#%%##%#**%*##%#%#+-+#
-.*=...................###%#**...:.-.....-*:----==++:+*=-+*::.-..=.:.+:=+%**+*:==...==--++=-+*--**+..#*%%#++*+-*#*##*+#%#*#%#%@%%###*=+%=##**#%#*%###%###@#*%#++##+*#+-+==+##*#%##**#+##@*#*++-*#+#%+-%@***%#+#%#*+#+++*-*%######**%**@#*+.++%##*#.#*#*#%##+#**#%#+*#*=##+##*+#*+=%*+%####%####+*##=#%*+#*++#%#...**...*#*+==.:*#****###%%*###-+***##*+#%##%%%%%#****=*%**##+-+#%#%###%%*#%#+#%*+#%+##*++##+%#*#%
-.+.................-=*#%%%#*=*=.....-=*==++:-=+--:+..-:.-*:-+++==--:-%%*##+-**=.:::=**=+*++###++*...#=+##*###+#%#*#%**%%*%#+-*##+%%*+@%**#%%%@##@#+-#*=#%**%%*+%#+#%##%%**##++*%#**#+*%%##*%###%**##**#***#++*##***#***=+++#+%%*-=%+**#+..-**####%**%*###+=*#+-##+*#*#%###%*#%@@%*#=....+-.=%%#*%####%%*#*#*#-**...........#####%#==#++*#*+%#+#%###%####+=*#+###**#%=+%###@%##%#**%**#%**#*-*#*+#%%*%%*#%*+%@#*%
-.#.....-..........#**+##=#%#+#%*=-..+*#*==*..:...*#-::+=+*==*=+-...=-*++#%####+*=#-++++++-.-*::=#...#%*#####%*#%+-##*##%%###@#####@#%%%#+#**+@%*%@#***-=*#*%%%#%%%#%%##%#**#*-+#**%##*@%##%@%#*%*=*=%=+%##%#%**##**-*+#*=+*+=+%#%%..-%#+..*#*#*---..*..*#%#*%%**%#%%+##@*+**=+***%#*=...+#####%#%%*=**+#@#*#**==:.......##*##*##%#+-##+*#*##@#**#***%+*#%#+*+=*%%#@%###%*#%%##%#++#%=%#*##%%#%#%####%%#++*=**+-#
-.#...-..........++#%#%+*:*=#*###**+..:-..***=--:=+*+=+++-::..:*.:%%#*****%%%##**=%:..*=.+*--+-+*%:.:#*+##*-###**+#*#*=#%#######%#**##%%#*###-##*#%%%%%*+#%*###**%#=##:.=#+++**#%%*###+##*=+**+#*##@%%##*%#+%#*+*+=+.=#%@.**####%###+......:*....=+*+*=..%%%%@%*=#*+####%%###+=#*=#%**...*%%#+#%**%#=+#+**%#**-..........#*=*+%+#%#%#@#**%#*##**#*+-#**#%@#%#%##%######+#+*#%#=#%%%#%**%#*#%**%%+++#+*#***%*#*##*
-+#............+%%*+%.:*#=++-::.%**%*...+-=-=++**=-+-:.-+:+=-.:-###%%#:%=.**==+#=+#*==*=-+%#++#+=+...##*#%*++*#+#%%##%#*#*@*#**+##=#*+%+#%%####%**%*+=#**##*-##**%%*#%***%*==%*+**=.***+#%#+#%#*##**###**%**#%#*%**#***#**+***+@@*=##*........##**#%%*....%*=*%**#%**%*+%###%%%%#*##*+*%*+*##*#***#%#%#.........-*#........*##%+**##*##*+##***%*#%%%#%#*###**%#****=##*%%#*##%*+#%+*##+##=*#*+#%*+*%**#%*%%#*%%*+
-**..........##*%%**.=*+##**##=-#**#@%..:-.....=++-*+:.=#=*=-+-@*+*++.-%%+*#*+=.+:%%#*-+-.=-:***+*...*%##%%###*=#*#=+%%*#%*+#*##%%##%%*#*=##%###%-#%+#***###*#%#*%#**#%##%**+**=#%#*#%###@*%*%%*#%#++%#*##*+*%*=%@##%#+-+#=**%*#%#+*+........**#+=+*#+....:.=##%##@##%*#+#+#####%#*##++####%%####=*#+**......=..-*#...#*++...###*+**=**#*#%#*#%*+#%#%%%%#*#+*#%*#%%####*#%##%%****-=#%+##*+####%#%%@%##%*-##-*###
-#%:........:*+##=#*#**+%#%#%%#*%#=##%**+=:=+..*##+##*-:+:-++#+%@*+*##*%%%*#%*+#*+######+.=+=-=%##..=**#*#*%#=#++**+*%%##%%*#@#*%#+##%#=#++*##*#%*%@@*%%%#%###%#+#*+=+#=**#%+####%%#%@#**#*=*#%**#%+##%*##%*+=+==+**##-+++++%%#%*+...+:........#%+%%#*.........*+#%#***%*#+:=*+#%#*#%#***+--..#%#+=+=:+*=+#%###***#..+##++*#+:+###@%*#%%#%%%###*=**#=#%%*%##%@#%##%###*+-*%**%###%*+%###%##*%==*+=*##*%%#+%#+*%%#
--:.......**+*.+.*%*:#%##.*#*.==#*.=-.+*#*-##*--==..-*:...+=*#-#%+#%*-*%*--#%+:%*+.*#.#%%*#*=.=#**...*##==*#**%##%*#*%%**%#**%*=+#+*%@%*###*#%*####%#+*#+-#%#*#%*#*#+%****%##%%##@##*######*+*###@@#**##*#%#+=-+=*#+*=++=+#**%#=######+-..+*#*...*#%*+........**=+##+.*%%%-*#@#+#%++#*+.-.+##+##%%##*+###+%#**+#*=+:.**%###*#*#%#*%%#=#*+=*####@%*#*+*%%###%*##+=*%#####+#**###%###+#%#=*#+###+*#*+##**%@#%%%###*
-=:......#%%#*...+#.+.#=-.*++.+-#+.+.**+*#+:=+.:-.=...+=+%%###=*.++*:=+*#.=*%:%##*-*%:+##*++*-=*+-..=#*@#=*#*-#*##@#*#%*##@***#**%**###**#####+**=*##*#%+*#%%**@*#%%#%#+*+#*+*%#+##*+#%%+*%#*#@+=***+%##+*%%*##%+###*+#+*=*+*#**+%***:--..+=+#+++.+=#+..:...%%:*###%=.*.....==::##+=*#.......=....-%@*##*++#*+*##+**+=+%**#@#**+#++#*+#%#+%##+#@#*#%+*%#=+##*#%##***+#%%#%@%+*#*++%**#%+%#*+%##%%###*#+%#*#%*+#**
-#*........++=.*-+....%%#=##*-%+*:*.+##*%*=.:-.=:-*+=+..+.:**%..%-*.*####****-=+##.=.++#*=+##++*#*..=*#%%%#%#-++=+#%*#%##*#**###*%%%#+#-##*=#%**%%#*%#*%%%%%#**#+=**++*#++*%+*#%#%@###*#*=##*#%%*+*%%%#%%#*%**+#*+%*+*%#-##%#%##*#........*###++*#+#%#-:.+.+#++**............#####%#*##+####%%**+*:+#++*%*#*#*#%%%#%##*##+=###%%##*#####@##%#=:*==**###%%*###*%###@#++**#+#%#*##*##*%#@%###++#+=##+****+##+%%*#@%
-=..........=+%#%###**##+%%*##%#*%%=#%*#=.=+..:...*-.-.....:#%##%%#=+%:+=.#*:.=+##:+#+##%#**#++#%#..-==#++*%#**#**#%#+%%####==*#=####%%*#%##%%#%#%*#-++=%#*#@%%*#*##%###%##%**#%*=####%%+**%##@%##%**=#%*#@**+*%**%%*%@%%#*#*#####=...+-.=##%%%#*#++*#::=+.**=++#=......+.....+##%##*%*+=#*=#%##%###%%#####***==+:#####+##*#%##*@%#++*-*#+*##*#*%**%##*%#%#%*=*#%*###*#+#%%%#%@%#+#***#+#%%*#%#-*%+*#*##%%##%**#@
-+............+**#*+.=*#++#++=*#%@@%#*+:::.-.-....+..-+--=*:.*%#*##*+%#+=%##%%##%###%###*#-:==:=#**.=###%**##+###**%*=*#*+%@###*+*###%@#%%%*+*%++#%####+%#*#####@#**%**#%=###+###+*###%%#####+%%%#%#+-*#**#%%##%#+#@%#%%##*#+##=+#....-*.##*######****.....#%%%##-......*..=-.=.++#*-=#+*##=*##*##*##+++*%+#*%*###**#%#%%#####+*##+**#-##**#%##%%*+##+**#%*#*++#*+#@##%@#*###+%#####=*#**%%#%@%%%%#*%###%%*+@#-##
-#.............=##*%:.+:+=+.+=*+*+%%=......-.:..--*::=:-::=-:.:+*@#*#-.*#+%*****###*#%:==+*=*#==*#*.+#+#%#+*#*-%%*##%++####*%**%**%#*##%+#%#+%%**%###%%%%%##%#=%##*#+*=#%=*%*#%@%%##**#%#*###+*%%%*@@%*%##*##=+%#*#%##*@#%%%#%%#+*##:.+=.:%%*#**#%###+-:-.+*##=#%#*-.+-.+.=#**=**+#%+#*###%%*%*#+%***#*...=##%##.*%###..**#+*%*=%%+*@@#%%**##*+*##**#**#%#*%@%%%@#*##*#%*+#*+*#%##%%%####*%#*#%***#+***=*%=#@%#*%
-+............:..**%#*==*-=.#***#=+--.-==.:.-...:.%::.:.:-=--.+--+*%##+:+#%..*:*+%#**##++-+:++*-*...+%=+%##*%%##%#*#####%*#%*+*%#*%%%*%##*##*##%#*%++*#**%#%%@%##@*##*#+##**-+++%%#+%#*****%##*#%#%%%+*#%@#%#*=#*+#%%**@##*####%%##%*=#*=*%%####+#%#+##*##*=*#+******#***=.*##*#%=##+=##-#%#*#@%#@%####++.**+#+-***##%%##%#*#%#**#*+**=###%#%%%*%#*#%%*=*%=+*++%*%+#%+*#*#*%%*##%+*##+#%#*%@*#%*+*%*#%@###*=#+#*#
-*:...........-...:+%+*%%#*%*+=+...+:====-.-.:.=#-*:...:..+#++=:+.#%%####%#*-#*#+#*#*#%*:*#++**+*...+#*+#@%%%@#**##%#%+*#**++++#%##%%%%%%*%%%#@###-+-=*++%#*#%%*+##*%%%*%%+=#++###**#++*%###%%##@#+-##*%*%**#%###@+#@**+%++#%%#%%*#%#**###%%--+-...#*%@#**#=-*#..-#*##*#%++%%%*%#..-.=**++%%%*%%%+%%#%###%++=+*=+##*####*##**#%#%##-#@#**%%+###+*%%*%%+***=+*+*+########%%#%%#*#+#*+**+##**%**%###%####*###*#%#%*
-##-=-*-............*++*%*+#%#*#-:.=:-==*:.--.=##=*%%%###+**+.=*-:.-*##%@%%%%#@%*+*#=+%*-++*=**#%...##@%#@###%*+##*=*%+*%#%*#%**##*@%####++#**#@#*%%**#%**%*#%#####+*%#**%#+*#*#%#%#%@##%%+=%@#*@#++=#=#%%%##%*###=*#%*+#*=#*%*%%%%@#-.==.#**++%+=-#+**%###%%%#*#%#=####*+=***-+%.=%**##+**#**%#*###==#%+%%#*#%%*##**#**#%#=-*##*%#+==%#*####@*#*=**##%**#*=###+#%%*%%#*%#+*%#*##*=##*+##*##%%#%%##%*###++#-+##**
-+..:................:**#%#%#............=:==-=*+-***++=*+-*=.:.+:=+--*###*#%*=.:.-*-+#%**#*++##*...##%#*#**+#%#%##**@++%%*+%%####+*#+++%**%####%#%#%*@##**#+*%**###+##**%#########=#@*+**#*+#%%%%%###*+=#=**##++%++%%@%%%##%%+*#**#%*+#*##%#%%#%**##+##+*#***%#-%*+###**%*###*##**%%*:........%*##%#=%#+*#%#@%@#+*=+*#***#*+=#%##@#####*=#+*#*==.*#*#%%#*%%###+##**##**##**#%#%%@##%%#*%***#*#%**+@##%%*%%%*+%#*
-...........-..........=**-.....:.:-..--=+---=..-.-....=##=**==:*+:..=.=*+*#=:++*=+**=+=#**%*=**+...+*%#*##%++@##@%##%#*+*+=#%*+*%#*%%##@@#@@%+##+%#**#%#####**####%#*#*###+***####*+%%#%%%*#%#*+#*+###*+*@+*####%###**++#**##%**##*#@*#%@%#*#*#%**%*+***++#*+###+##*%###%##%%#+*+*=#=.........*##%#%#%%*+#+-*********####%%%###+=+***%%#*####%....+**#+=+*#+#**+#@**%%%%##++#*=#+*+%##+#*#+%%*%@##@%**#*#%###@%:
-++.-............................:...=.:......:--.=.+*--++-::-......--.:+#-=--=*#*+*+.:-..+#*+#%*...**%#%#%%*+**++##*##**%%=*%#*#%%*#%*+%%++%#**#++=%*#%%#*@**#%**#%*##***%+++#%#*%*###**#%*#%#*++****%%%####%%**%##+....*#*+%#%%%%%%%%#@@#*%+=***=*%.##%#*%%*#%**%####+*#*+#%###%++***..+#*#..#.-..#+.###+#+=#%#*%%%###..*@*##*#=###+#%#*#*#+*#:.+%+*#*=+#++#*%*#*##***+#%####**#**%%#*#####%*%@*%#%%++*#+**+###
--.......................:..................::.=.++.-+::-=....:.=-:.==-=++::.-.-:....=.+====*=*#%...++++++##*#%##*#**#%*#%%%##*+*%#**%#+##=*+%*%%@*%#+*%####*=#%+-+#**##%%###*%##*%*+#**=-*#*##*%#%+*##%**##=+#*++##.....#%*##%*#%#*##*=*#@##@%##***%#*%%#+***=*++**#*%##+***##**###*#*+*#+*##+..*+*%###@*%%%##%#**@#*##*+*###*%#%#%%*##*###*==#++*%*%@@%%%##*#%**#**###*##%%@%#%@%###%#*#*=*#=-*%*#%##%@%##**#**
-...............................:..-..-:-..:..=...:..#::.-+:.==:-*:..:..-+.--:..:.-=#==-*=.-+==+#..=%**##*%%##@%#%%@#**#+*##++#==+%**##*@%#+*%++%%#+#%+*##*%#**#%#%%*+%%*+##+.%*#+##**%%####+**##+##**%%*##%*#*#***#-+.**###=+%+*@@%*%%+*%@##%%*##**#+=*%#++##+%##*#*#%%%@%%*=#=**#=+##**##+##*.+%####*##*=*##*%*+=*%%#%####%+*#%***#+*@%#*@%%%@###%#*#*+-#+#-**+#%%%#@#%###*#%#*%##*##+#*%%#%%**%+*####%%#%*#*#*
-=......................:......................=:.=..+=.-:.-........:=--=+=.:#+::-=......:.--*=#*..+%%#%%###*=+##**%%*##*%%###%#**%*#*@**####*%#*%#*#%*#%#*%%#*+%%+%#@*#*=#+**###*+=+#+@*#*++++#%+*@#+#%%+%#%##%#*#%*=*#**%%*#%####*#%@#**%*=##-+*#+#%++##*%#%##%#*@*=+##***##%##*##+*###%###%+.........*%+###*#%+#*%**=##*#**#*##+%#%##%#**#**###+#%=*#%##%#*#%###*+*#%%*+#***+*+%##*@#+*#**@*##@####=+**=#*#*#%
-:...................:=+*+=:..:..:.:-..:-:--.++*+**+.=:=.=**:-#+=++=**+*+++::+:.-++:.+-.===*##+#+..:#***%*+%##+##*##%%*##*###=#%*#*%*#*#=*%+#%%##%***###*%#*%+-+#*##@*%@@%**%#%%#*-...+*%###*-%%..#%%%#%****%=+%%*#%##*@##%%#%#***##*+%#+%@#%%%*#%##%%#*#%:...+#%%#%%#=%*###%#%%#%##+#%#+%#*##*..........%%*%%++%%##*#+=*#**%##%#%##%##%##**+#++%*#+%#=%%*####*%%+***:+#+#*#%=*++#+%*%@#**##=**=+%#*#@#%#%##%%*#%
-..............:..:..................-.-=.-+..::.--=...-:-*++*%#-.:==.#-.*=-.:=.-=*++=+***+:+*+=+...*@+#%%#%%@*#%**##**%%##%***%+*%#%%%#%*%####***#==+*++#%*#@%##**#%#*%%##*#*+*#=-#=.*#*%#%#*###*-*#++=%##%%%*%###%%%####%##*#%##%#+*####@###%###%#*%%#%#*=*%**###%@%%#+#*%%*#%#*##*.+#+*##*###=.......+#*+##+=##+*#*#-.%-:*..+..=:*..=..--.@.....=..-#+..:*=.-.....:...*:....=.....+**#*%%**%*#*###%@**%++%#+#%
-..............................:-...:..........::-+*-+*--..=:-=--===:==--*#*+*%=.=+-:++-.=+.:*++=..%%%#*##*++%*+#%*##**#%#%%%*#%**#%*##@*+*#++%#*%**+*%*+##**#**%%###****+#%%#+%##+#%*%#%%*:#=**%****#*#####%%#%%*+*#+#%%**##+#@%*%@%##%####**##*+%+**%##%%#%%%#@#*+%#**%*+%*#+*#%#%#*#%###**##...........*..#.........+.#..+..:..=**..=........:......*%:.=@#.+....=.-..-.+.=-+.++*++##%###%%#####*+*%#+##*+%#+#
-...........................................-==*=-=-...:-.==-.:*.:##*+=+--+.-....:-=.--+:+#*+*++...=*####%#=####*%###*#*@%*#%%#%#%##+=*#@*#%%###+#%**#@###*=:#*=+%*#%%*###...#...*+..*-+%##*##=*@%%#@@*#+@==#%####+#*%#%%%#%@%#*#+=#**#%#%#%#+%%%%#%**%#=*+++#**#%#+%#*+##*%%#####*##*#%#*%**==.........+:+.::-..#.:.#.==##*#%#***#*%%*=*#*+-*++**%+*#*++##*#=+*%*.=#**.=##*.+*#*.=*%#.:#-+##=*##+#%*###**.*#%%##
-.................................-.==........:-=-.....+===*++::+..=..-+*.::.:.+=*#++.=.:-+-==#*...**#%*#%%%*%*#*%%#%%%##*-=+%=#%#%%%%%%#*#@#*%%#++*:+#*%#%#%##%#**#*#=##*+**#++%%*....#%%###%#+#*=++#%%@%#+%%%##@%##%+=%#+*%#*@%%#*#%#%%#*#%*==++#%#*#%=**#+*%**%#####*%+*%%#%##*++*:+#.:#%%##%*#%*#*#**=*-*=#-.#%#:.###+.:*%...+*...*#...#=...##...#*...+....#...##...#-...#*..:--..#%#...............=*%*+@#*#
-.............................................:::=-+--.--...:::-......-**++**+=*-=+==.-....+.=*#...*#*#***##*%**+*#+*####%%#%%**%%*%%#**#=*+**=%#**@#*#%###*#%@#=*#*#*%#*@##**#=*%#+##**#*%+*##*#%%*+*##%@:#*#*=+#++.##+......+#%%%#%#%*@-...**+#++%**#.#%%%**@*+###+***##*+%*=*###%%#**..*######*#*..=*+*....*:...*+...=...++:.-*#+.-#*-:*#***+=....###++#*+##+#%#+###+***#%#%#**-+##+####*%.+%+=+#*###*###+-%#*
-............................................+::.=.............-..::+--==:..%*##*=#***#%#*#*==*#...##***+*#*+##@**#**@###%###%#+%%**##*%#%**##+%##%*%#*%#**#=*%%+****+%+*%%#*#%*+@#+...+=#%+***:#%%%#%##.*###*%+**....%%##.....+#%%**%#+:...*%#%@#*##**%#*+#***%+..*..+#*@%*%#*#*##*%%#+...#%+*#%+#%*:#=.**####%*###:+##**#%**###%@#%#%...**++##*...:+#%%%#*...=**#+*#%=+#*####*%%%%@#+*###+%*+*#==%*#*#%%**#*-#+
-..................................-..-.......-:.+..-..=+-=:=+-:.=-+:..-.:.=##*%%#%###*##*#%=.-*...###%%#*#*+#%*#%%%#*#*=***+#%*###*%###%%%##%=#%+=*%+##%*%#***@%%*%##*#**#++#%#@#%*...#*%#####.=#*%**%#.##*#%@%###:..*-=.....+=#+**#%*#=....==*#@#%%#+%%.*%#**%##%....+=**#*%#*##*=-*=+..+*%##%%#%@%-##.-...-***+%##*#%%#%%#..++==%#=#...####%@+..#*+=*=*-.=##%*%#%#%##-%%*#%%-*%+*#%##*#**%%##%%##%**%#+*##=.#+
-........=*#*++......+#**#=......-=-=+.........-+#+:...............:+-:++#=.=.-+#*==-.....:#+-+%...#*###%#%%*++#++###%%#%%%%*#*#%%%##@#+*%*+*%#*###**#*###*%%%#**=##+*@%+=%.+#%##%%#...***###*-.:.##*#*#.%#%+#***%##..+-...:*#.........*.....%+**#=#%#%%.:+@%%+#%###==#*.*#=##%##%%==%%*####@*++#+=*#-#*.*#.**+%%#%##++.:.+#.+*%###*#*#*--*%+=-#::+##+#*+*+##**%##+.+=..*###*#%*=%#+*##*%##++%*#%#*%##*=#==#.+.%*
-..*.......#***#:.....+#*##*:......++#%**....-..=#+....-*#%+%#.....:*#**%#:......*+%%%#:.....+*#...%*+=####=%#*%%+*+########+#%*+%***%@+#%*+####%%#*%#%%%+***#*#**+#**#@%%+..+.%%#%%...#+...+#..:.#%**%%.+##+**+=*%%*#@#....+%+.......==....*####%**@#%++.*##*+*#=#%#%@%#%#***+##%#*:+*+.%*#%#%+#*.=#-=+.*.-*#%*#++%%**##-....=%%.+#-:...+=**+*+#..###%###**#*###%%%+=..=+##*%%%%#%###%#*#%**#*++#**%@#%%#*%.+.##
-..##:......#++#*-......=###**......+##**#.=.....=...#%**#++......#**#++.......*##*=#:......#-.*...##*+#*%*#%#%#%%**#+#%*+@*++#*=*#%#@%#%@#*%%*-*#**#**+##*#%#%@%%@%%#*%*++..+.#%%#+..+%%++%#+=.*+*...*...#%%%@#*+*%++#%.*=:*##*#=...###....+%###%#**#*=#*##%#.+++##%%@%#%%*%**+**%+=**...*+#*#%%%=..........++=%#+###*@@%*....*#.:*.:...*+%@*##@+#*#+-##+=##=*+#*%%+*#%#*###*%#####+***##%%#@%%#*#+###*#+**.=.=*
-..=%=-.......-=+++-......#%**%=......#%=+*+...-.=:***+**%......+#%+#*+......%%%*#*.......**##+=..*#@%###**-*+=*##+%*+##*%#@@##@%#*#=+##*%#####*#%%##@%##%**%#+##%%%*%*##*#..*+*@#*#..=#*%%#++##%++#%=#*##**%*#%#*+#%=%*+#%%#%##+*=.+#%#@##*+*%#+%*#*#%**####%=.#...*#-#=*#%#+#%...#=%#...:**#.-*#.:+:....-...--##+*:-=+##*=.=#-##+*..**##*=#*=**#*%%+=%:**######++#:.-##*##*-*%##%%##%*+##%*#%#*%#+*#*=+*++.#.#%
-..-*++--......-#**%%.......*+**-......+#%#%..:..=.+=+*=......=@*%%**.......+=#+++......**+#*###...=*+=+@##:###+%##%@%*%#**##=+%#+##%##%**%%#%%*##%#%#%#@%####+=##*%#%**#%%..##@@%@%*=:#%#*#%#%@##*#%.**%*+**++#%#%#%%#%%%#@%%%%#****+*%#%#%#%#%#%#%#*@#*%+*#*+..--+##+..*#%#*%*%*##.=**=*#%#*#+=*+-*###.#+**-..#%%#+*+=++**==%#*#*=.=*###+*=*=+*%##*##%%#**######*+==+#**%%%%%%#*%%##%@#+**:=**=#%%#%##*%##.#.%@
-.................................:......+##.....-.%*=......=*#%#+#......+%#+*#-......#*+**+..+*=.-+##%*#@#=#*###%**#####**##+*#####%*%@%+*%*#%%*#%#=#*#*##%%@%%%@##%%*#%#+..**+###%...#%#-++*#*%##**%++%%%:%%#+.%*#%..#%*+####%#%%%@#%%#**%%#%#+*%#+*#@%@**##+****+..............=+++*#+*#%#%#=..*..=*=.+*=+#*-++**###..:--%##*#%*==*+**#%#%##*#**#*#+*#*++*%**#%%*@#*#%#####*##+=**+*##%@%##%####%*#*+**#+.-.#%
-..........................................+...:.-..................-..=-.=.=-:-.............-#*-.=@%%%##@+-##*++%+#%#*##%#%%%###+*#*#*%#**#%+##%#@%%@%%###+#%###%**##*+###+.:#*#*%%%##%%#**#.*##%%%#@*#%#**:.##.-=***.--=+#%#*@%#*%@%*%%%%#%###+##%#*%#+#%*#%#%#+*...............+####%#*#%+#*#=*#.=**-.-+=..:==%=...*++#.==#**#%@#%%%**%**##%**#++=#*#%%%%%**-%#***##+*#+#@**#@%=%#**##+#@*##@#-#*+*%#+##=.:.*#
-................................................=.................:--=*.......=........:+.+*+#+...*=#%*#%#.##%*@%@#%#*+*#=+#%+#@#**#*#%%#%%%#%+*#*#**%%#*+++*+###%#*%@%%*#%%#%*%.+..##+%##%%%**#%*@*@#*+=#-*.+*+*..........@###%#*#%%##*=*%*%@@%#@@%***=#**+*###%%**#-==.....-*#+*#-#+%#%#*#+#*+#*=##*..**=-....##..+#++#%#%%%++##*+*#%###***#*#####%**#%#+*%+#*#+=###*#%%*%+*#%%*#%####++##=*%##%@*##%%%##.:.*#
-...............................................+=#............................::-............*...*#+*%##%%*#*#*+@++@#%#%++=+%##%%#%%%**%#+%%####+=*+=%%#*%%#%#%#%@*@%%##%*+.#*:#*...%%%%@%#*#*=-+:.-##++*#+*#..###*##===*+++.......***#%#+**+++#-*#%*#......*%%*%##*##+:.......-**+**+%**#@#**=...*.*........**=+%@#%%%#*###%#@*=*+=+%##%@%%*%##@@%#*%#*+#*+%%*#@%*%%##%%##*#==***=%*#%%%##%##%%#%%#**#+-#-...+*
-..........................................***=+##+.......................:..................:#..:%@*#%##*%***#*=#%=*%%##%@%#%%*#**#%#**%*=*#**%%####%%%#####*##+*#++#%*%%@#+##+#:...##****+#+#+**.........=+*.-+##%%@%%%%#++++=+--..............++%%#+.......###+#=...........*%*%#%@*##%*####%++=+.-...#+##%#######*%%***++*#*%##%##%%#*#%+**#++*+#%%##**##%%%*###*%#+*######+###+#%*##*##%+###=*#%#*%*+*+:*%%#
-.....................................:....-%%#+#.............................................+..:#%#*+@***#**#@#*%***#++%#+%#%++#**#%%#%%#+#***#*#%%#**#-%##+#@####*+%#%##*##@*+.=.+##%*%%#+*%#*##%*=#**#%#**@#+#%###@%@@#....................-#%##%**:.............:*#+==:...=+**#*##*#**#####%*#*=*#%.+%%*#%%%#+*#++%#**##+%%#+%%#*#%*+%%##%#*+##**@%##%%%%%#=+#***#**####%@*#####***##**#%++*#+%#*###%%@#%%#*
-....................................=.....=###*#......:#%##%*=...............................=...*%##%####%*+*#**##*=#=*%+#+####%%##@#@#%%#*%*%#*=*****%#*%#**#%*#%%%@#*=*%+#%*#**.#*%%%%%%+**#+*@#*#%%+%*@%%#####*#*#+..................+=**+=#%%@%#*#%*###%##%###.-**=........##+-##*%%*#%*#%%%#%###*.#+*%**@#*#*%*%%##%@#*#*#-+%=+#@%*#%#%@#%%%@#=*+*+*##%##*#@###%%%*##+*%*-*%**%%#%@%##%#%@%##*#-*#=+%#####
-=..........................................**==#-............................................#...#%%##%#%*%#-*%-=#%####+%%##%%%%%@#*+*:*##+*%@%%%#*%%##@%##%**#+-*%**%@@=*%*%@%#*#+#*%#+*@@**+###%##%%%%####***#*@##=%*.++++=...........%@#*#..#%*#@*#%*%#%%*#@%##%..#****::*-...@%#*%+*@@#%@#+%+===**@.###*#*%%##%%%*+*+#+#@#@%**#@#%%@%@%%*-##**#@%#%@**%%%%@*%%#+*%+=*%#*%@%+*#*+%%#%*%++#+*#%%#%%=+%*+*=.**%
-....................................+...:#+**#=+:........=+...............................=.=*...##*+-#%#=%%*@%%*%#%*#%##@%##%#*#%%%@@%##%######%##*##*+#*##%+%##*%%%##%#%#@%##*##+%###**###%@#%%*%*%*%%%%@***%*#%%#%@%#*+%%*#++=*:...+*%%#%%.=**%#@@*%*%***+**#*+#.=%@*###*##***##**%*##%##@%#=*#+##=..#%#%%*#########%###%%+###*%#*=*@####%###**#%#%%%#%%*+%%***@*+%#*+%#%%#%%###+#%##*%+%###*#+*%%#%@%*#=.*-%
-:.-%#*%##+#@**#*+*#++%#*=%**%#%%#*#=*+-:==%#@#%%#.....++#%#.................:..:=...-...-+-=#+...*%%%%%%##%##%###*%#**#***%#*%%##%##%%%*@#*##%+*%##+#+%+#*###%%##%%%**%#**##+****#@##%%%#@%*#+####%#**%#%%@@@%##%%%#+##***%+*+*:--...+##%@#+*%#%%%%%%**+.=#@@**%%#%#-=%#%....%####%*#%**#%*#@##%@%#*@#+.#=*%%#+##*#@#%%@@%%%##+%###%%=#%*#%@@%%%%#%*#*#%**%##**%+#%##@@*##**+##**##**@%*%%%#@%%%%#*#@#+*%.+..+.%
-:=:-............:.+..*.-+==::+.+:..........+:*--#*-*##+**+*-*+++*#***%**##***#%*%#+*#++*%#*#***%###%#%@@*##***###%%%##%#*%@#%@@%%%%+%##*#@###%#%*@%#%%%*%#+##**%**%%%######%%#@%%#%@##%##%+%%%%%*%@@#%*##=##**%#####++%#*#%*+-=......%%+%%#+%#%#@@*#%%#*%%#%%@%@#*%%.#=#=*%..#@##@%##@#@@#%*#%*%*@*%%*%.%%#%@@@@%%###=#@%#==%###%%@*@:%%%++#***%%*##%%%##%%@###***%+**%@##%#=#%##%%%##%#+@%+#%**###+%#+*%.#.:+-#
-#####+%##=#%%%#%*%%#@%@%##%#%*#*+#%+#%##*+---......................................-:.:-+*-##.+..:**#+*##%@###%%%%%%##*#####+*#%#@%**@#*#%%%%%**#%**##%%**%@+*=*++*%%%%@%%*#*#%##*#%+-=%###%***#@%%##**#**=*+=*#####***#+*%#++==*+*++%%%%@%%%%%*%@%%%##%%#+%%#+%@*%%.*+%@######*#%%=:**#*%%#%@++%##%%@%-%%#%%%*@%@*@##+*%.*#####***#%++%%**=%#+#%#%@#**#*#=*##%#*###%**%*#%@%#%%#%%%%%###*#*+%%*%%%#%@%*#*#*#*.#
-#%%%####%#@%%###*+#%=+#%####%%@%%###+==-+*.::....:-.:....................................................:-=#@%%#*+*#*%%%#*#*=%%#%@%@%@%*%#**#%*%##+#%*+#***@@%%@##%%#@%#*+.......:-...+..:.:=.....::.:-.-+**-+*-::*++==..*#:##%@@%%%%@%#@%%%#*#@@%+#%##%%#*%%*#%%#**@%@##@##+%#**%+=*###%%*@*%%@@**@#%:%###%#+*@%#+%%%***==###%+**%#**##%%@%%##@%%###+**+=#*+#%%%#@%%%%######*%+=*%=**%#%%%%@%##@#*#**++-=.#-.#
-####%%*%#%#%%*#*@#+....*#*#%@%%%##%%+#@##*#**#+++*%#%%####%+*##***%%*#%#####+%*-..................................-*%#*%%@%@#*@%**@#*%@@+*@%*#%#%@@##@%#+@*##%+###*###+%%*#@:........................-:--::-.......-:..........%%#%@%*@%@##%#%%@##@###%*+@+...+#%%+%*##%%+%#%+##%#%#@%*###%+=*#*#%#+*+%.%@%%@%@%@%**%*+*%%#++*%*%%#**#%-#%%##**+@#*+@%#%@%%*@#*++#*##*%#**#*%#%%#*%%#**%+#%+#%%#%*#**%-=.+*%##+*
-=-..-#*--=+#%#=-*##....+#=....+@*##@#%#@*#%#@*%%%*+*+*##%%#%#%@%##@#**%*++#-:-......:%%#%#%#+##*.........###%%*##@#%***%##+%%@%@#=*%%*%@@#@%*#%%+#%#*%##*##+#@##%#*%%%#%%#=#............................:..+*=*#%++#%*+#%**##=-%*=##%#%@#*@*%@@%%@@%%#%*%%%**%##%@*#@@%%##%##%###=*##+#@%####*##*@%%#%%*%@#+#%%#%#+%*%*@%@%###%*+@##%@##%%*=%%@#@%+##%*#%#%%####+**#%%+#@%**%*##@#%%%%**++%#*#%#####%#*..=#**%%+
-.......................-#++#%+*%+*%@@#@@*%@@#+%######+%%%%#@#%@@@#@%%*%%#+%+#%%*##%#*##%%@#%#%*=**#**%*%#%**.*#%@@**##**%+*##%@@#@#%@*%%%*@@%%*%*#%%*#%##%%=*%**#%%#%%###%*#...........:+**+#*:-=+=*##+++**+@#%#@%#+#%%@@%#%*=:+%#*@#%%@@#%###%@%%@##=%#@#%##%%%%#%#@#.%@%#%%#*%#..::.#@%*%%#**@#%%@%%##*%#*%*%%%%#*#%*#%*@%##**##%*%%%*+@###@#+%*@#*%*#%#%##%%%*#+#%##%%%%#%#+#%##**=***-*%*#%@%@@#*#*...@:*#.+
-**#+=-=--==...................+%%#%#@%#%%#*##%%@@##@##%%##%%%#%%%=@@%%%@#%**#*%#%%@%*#*%*=%@#%%*%*%##%%##%#****+*%#*%@*#%%*#%##@#@%%%#*%%#%%%##%++###*%%%%@@@*%#%%%#%%#+-#*=-+++###*#%#*###+##+=*###@@#%%%#@*%%%@%**@%+%*#@@%@@%%%**%*#%%###**##%*@%%@@@@#=###@#*##%@%@+@##%%%###.....*@%@%%%###@%%%#%#*-=#+:+%#%%##%#%###%#*#+++#%##%%###@*###%##%**%#+*%##@*%%%%#**#*%%*#*%+=*%#*#=*%%*++*+**%%##+==#..:#+%%.%
-+*#*+%#=.*:......................:#%@%%%#+**%%%%%#@%##*@%#+%#%#%#*#%##@@%%%@%#%%#*%%##@***#%#@##%%%+%##*+%%#+*%**@#@%@%%@%#@##**@##%%###@**@#@##%%@#+=+%#+%#*###%#%%*#%#%%%#+%#**#%%*#*=+%#%%%%#%%##%@#*@%%*=%#*##%#%%%%%#*%%%#*%%#%%%*%%%%#@**%%*%%%%%@@%%%#%%###%%*%###%**@%###..=#-=*+.*#*-.+=::@#-.#=..*=.......................................+%%@%#%#++%+#%-....=#%##%%%*+.....=*........%.-.......*.=+.%
-*+%**###*%#*==..............#***#%#%%%#@#%%#@*#+##=#%*+%#*%#@#@%*#+%#***%*@###%####*%%@%*%%%#*@%+*#@#%#%##*##@%#%%##*%#@%#%*@%%%%%%%@@%*%#@@%%%*#%#%*#*#*=*%*+%**%%##%*##*%*#%#*#%#+#%%%##%##@#%@%##+#%+#%%*#@%##@#%%@@#%@*%%%*##@#%@@%##%%@@@%%@#*@%=*%+*#%%@@#%#%##%#@%@%%#@*#:....+=+%*+#%+#%#+@%%#**==#+#.*:..==.:..............................+*###*%##****##....##%%+%%##+=....+*-.==*+*#%+#**+*###%###+*
-@%@%%@+#@%#%*#...........#*..###%@+#+%#+#%*#%%*#%%%#**%%%%%#%*+%#%%#%%%#**%%@##%%*%+*#*##%%@#**@#%#@###@#@%##%#%##%%@%@%#@@#%%@%%%#%%@%#@@#%@##****#+%%#%%%##%@#@%%*%####+#**%####%%#@%##%##%%%****.%%*#*%@@%@@@+@@*+##**%%+@#%@%#%##@%=#%#-=..=*%@@%+#@%*#%#@%%###**#%**%@#%%+*....::-*%%*%#*%%%%@%%##%@*#%#*%%###@*#***+*%*.......:................++%*#%%*+%##%##+#@#*@#*=****#+##@%**##*%**%@#+*++=#%%#@#%@%
-
-      </pre>
-    </div>
-    <div class="noise" aria-hidden="true"></div>
-    <div id="bg"></div>
+    <script>
+      // Typing animation for the trailing dots
+      (function dotsTyping() {
+        const el = document.getElementById("dots");
+        const frames = ["", ".", "..", "...", "..", "."];
+        let i = 0;
+        setInterval(() => {
+          el.textContent = frames[(i = (i + 1) % frames.length)];
+        }, 500);
+      })();
+    </script>
   </body>
-  <script src="crypto.js" defer></script>
-  <script src="dom_loading.js" defer></script>
-  <script src="get_user_info.js" defer></script>
-  <script src="newsletter_form.js" defer></script>
-  <script src="pipes.js" defer></script>
-  <script src="planets.js" defer></script>
-  <script src="typewriter.js" defer></script>
-  <script src="weather_data.js" defer></script>
-  <script src="ascii_art.js" defer></script>
-  <script src="ascii_effect.js" defer></script>
-
-  <script>
-    window.addEventListener("load", () => {
-      startAsciiEffect({ delayMs: 3800, cycleMs: 1500 });
-    });
-  </script>
 </html>
